@@ -1,0 +1,19 @@
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;800&family=Inter:wght@400;500;600;700&display=swap');
+
+:root {
+  --font-display-kala: 'Playfair Display', Georgia, serif;
+  --font-body-kala: 'Inter', system-ui, sans-serif;
+}
+
+@theme inline {
+  --font-display: var(--font-display-kala);
+  --font-sans: var(--font-body-kala);
+}
+
+body {
+  font-family: var(--font-body-kala);
+}
+
+h1, h2 {
+  font-family: var(--font-display-kala);
+}
