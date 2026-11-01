@@ -1,5 +1,5 @@
 # Database Update Required
-
+Suppbase = EtGwK,2yXAb%DTJ
 ## Update Agents Table Schema
 
 Run this SQL in your Supabase SQL Editor to add the email field and update constraints:

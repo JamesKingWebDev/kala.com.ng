@@ -140,14 +140,16 @@ function HomePage() {
     <div className="bg-background">
       <Navbar />
       <main>
-        <section className="relative overflow-hidden bg-primary text-white">
+        {/* <section className="relative overflow-hidden bg-primary text-white">
           <div className="absolute inset-0 opacity-30 [background-image:radial-gradient(circle_at_20%_20%,rgba(201,150,10,.34),transparent_28%),radial-gradient(circle_at_85%_70%,rgba(255,255,255,.12),transparent_25%)]" />
           <div className="absolute inset-y-0 left-[8%] w-px bg-gradient-to-b from-transparent via-accent/50 to-transparent" />
           <div className="relative mx-auto grid min-h-[690px] max-w-[1380px] items-center gap-12 px-5 py-16 lg:grid-cols-[1.1fr_.9fr] lg:px-8">
             <div className="max-w-3xl">
               <div className="mb-7 inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-4 py-2 text-xs font-semibold text-white/75"><BadgeCheck className="h-4 w-4 text-accent" /> Trusted help, thoughtfully assigned</div>
-              <h1 className="font-display text-5xl font-semibold leading-[.98] sm:text-7xl lg:text-[88px]">Your errands.<br /><span className="italic text-accent">Our responsibility.</span></h1>
-              <p className="mt-7 max-w-xl text-lg leading-8 text-white/65">From market runs to home care, KALA handles everyday tasks with verified people, attentive support, and real-time order updates.</p>
+              <h1 className="font-display text-5xl font-semibold leading-[.98] sm:text-7xl lg:text-[88px]">Your errands.<br /><span className="italic text-accent">Our duty.</span></h1>
+              <p className="mt-7 max-w-xl text-lg leading-8 text-white/65">
+              From deliveries and grocery shopping to house cleaning, market runs, tours and everyday errands, KALA coordinates the right professional and keeps you informed from request to completion.
+              </p>
               <div className="mt-9 flex flex-wrap gap-3">
                 <button onClick={() => navigate("/book")} className="rounded-full bg-accent px-7 py-3.5 font-bold text-primary hover:bg-[#e1b43a]">Book a Service</button>
                 <button onClick={() => navigate("/track")} className="rounded-full border border-white/20 px-7 py-3.5 font-bold text-white hover:bg-white/5">Track an Order</button>
@@ -164,74 +166,646 @@ function HomePage() {
             </div>
           </div>
           <div className="relative mx-auto -mb-14 max-w-[1180px] px-5"><ServicePicker /></div>
-        </section>
+        </section> */}
 
-        <section className="px-5 pb-24 pt-36 lg:px-8">
+        <section className="relative overflow-visible bg-primary text-white">
+  {/* Background atmosphere */}
+  <div className="absolute inset-0">
+    <div className="absolute -left-32 -top-32 h-[420px] w-[420px] rounded-full bg-accent/10 blur-3xl" />
+    <div className="absolute -bottom-40 right-0 h-[500px] w-[500px] rounded-full bg-blue-400/10 blur-3xl" />
+    <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_20%,rgba(201,150,10,.18),transparent_28%),radial-gradient(circle_at_85%_70%,rgba(255,255,255,.08),transparent_25%)]" />
+  </div>
+
+  {/* Decorative vertical line */}
+  <div className="absolute inset-y-0 left-[7%] hidden w-px bg-gradient-to-b from-transparent via-accent/30 to-transparent lg:block" />
+
+  <div className="relative mx-auto max-w-[1380px] px-5 pb-28 pt-16 lg:px-8 lg:pb-36 lg:pt-24">
+    <div className="grid items-center gap-14 lg:grid-cols-[1.05fr_.95fr]">
+
+      {/* Hero copy */}
+      <div className="max-w-3xl">
+
+        <div className="mb-7 inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/[0.04] px-4 py-2 text-xs font-semibold tracking-wide text-white/70">
+          <ShieldCheck className="h-4 w-4 text-accent" />
+          Reliable service coordination
+        </div>
+
+        <h1 className="font-display text-5xl font-semibold leading-[0.96] tracking-tight sm:text-7xl lg:text-[82px]">
+          Your errands.
+          <br />
+          <span className="italic text-accent">
+            Our responsibility.
+          </span>
+        </h1>
+
+        <p className="mt-7 max-w-2xl text-base leading-8 text-white/60 sm:text-lg">
+          From deliveries and grocery shopping to house cleaning,
+          market runs, tours and everyday errands, KALA coordinates
+          the right professional and keeps you informed from request
+          to completion.
+        </p>
+
+        <div className="mt-9 flex flex-wrap gap-3">
+          <button
+            onClick={() => navigate("/book")}
+            className="group inline-flex items-center gap-2 rounded-full bg-accent px-7 py-3.5 font-bold text-primary transition hover:-translate-y-0.5 hover:bg-[#e1b43a]"
+          >
+            Book a Service
+            <ArrowRight className="h-4 w-4 transition group-hover:translate-x-1" />
+          </button>
+
+          <button
+            onClick={() => navigate("/track")}
+            className="inline-flex items-center gap-2 rounded-full border border-white/15 px-7 py-3.5 font-bold text-white transition hover:bg-white/5"
+          >
+            Track an Order
+          </button>
+        </div>
+
+        <div className="mt-10 flex flex-wrap gap-x-7 gap-y-3 text-xs text-white/45">
+          <span className="flex items-center gap-2">
+            <BadgeCheck className="h-4 w-4 text-accent" />
+            Verified professionals
+          </span>
+
+          <span className="flex items-center gap-2">
+            <MessageCircle className="h-4 w-4 text-accent" />
+            Human support
+          </span>
+
+          <span className="flex items-center gap-2">
+            <Clock3 className="h-4 w-4 text-accent" />
+            Order visibility
+          </span>
+        </div>
+      </div>
+
+      {/* Hero visual */}
+      <div className="relative hidden lg:block">
+
+        <div className="absolute -inset-4 rounded-[44px] border border-accent/20" />
+
+        <div className="absolute -right-8 -top-8 h-28 w-28 rounded-full border border-accent/20" />
+
+        <ImageWithFallback
+          src={brandImage}
+          alt="KALA service professional"
+          className="relative h-[570px] w-full rounded-[40px] bg-[#071126] object-cover object-top shadow-2xl"
+        />
+
+        {/* Floating information card */}
+        <div className="absolute -bottom-7 -left-10 max-w-sm rounded-[26px] border border-white/10 bg-[#071126]/95 p-5 shadow-2xl backdrop-blur-xl">
+          <div className="flex items-center gap-3">
+            <div className="grid h-11 w-11 shrink-0 place-items-center rounded-2xl bg-accent text-primary">
+              <CheckCircle2 className="h-5 w-5" />
+            </div>
+
+            <div>
+              <p className="text-sm font-bold text-white">
+                One request. One team.
+              </p>
+              <p className="mt-1 text-xs text-white/45">
+                Managed from booking to completion.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        {/* Small status card */}
+        <div className="absolute -right-5 bottom-24 rounded-2xl border border-white/10 bg-white/10 px-4 py-3 backdrop-blur-xl">
+          <div className="flex items-center gap-2">
+            <span className="h-2 w-2 rounded-full bg-green-400" />
+            <span className="text-xs font-semibold text-white">
+              KALA operations active
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  {/* Service picker */}
+  <div className="relative z-30 mx-auto -mb-14 max-w-[1180px] px-5 lg:-mb-16">
+  <ServicePicker />
+</div>
+</section>
+
+        <section className="relative bg-[#F7F4EC] px-5 pb-28 pt-32 lg:px-8">
           <div className="mx-auto max-w-[1280px]">
-            <div className="flex items-end justify-between gap-8"><SectionTitle eyebrow="Everyday support" title="One trusted place for the things that need doing." /><Link to="/services" className="hidden items-center gap-2 text-sm font-bold text-primary sm:flex">View all services <ArrowRight className="h-4 w-4" /></Link></div>
+
+            {/* Section heading */}
+            <div className="flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">
+              <div className="max-w-2xl">
+                <p className="text-[10px] font-bold uppercase tracking-[0.28em] text-accent">
+                  Everyday support
+                </p>
+
+                <h2 className="mt-4 font-display text-4xl font-semibold leading-tight text-primary sm:text-5xl">
+                  One trusted place for
+                  <br className="hidden sm:block" />
+                  the things that need doing.
+                </h2>
+              </div>
+
+              <Link
+                to="/services"
+                className="group inline-flex items-center gap-2 text-sm font-bold text-primary transition hover:text-accent"
+              >
+                View all services
+                <ArrowRight className="h-4 w-4 transition group-hover:translate-x-1" />
+              </Link>
+            </div>
+
+            {/* Service cards */}
             <div className="mt-12 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
               {services.map((service, index) => (
-                <button key={service.id} onClick={() => navigate(`/book?service=${service.id}`)} className={`group min-h-56 rounded-[28px] border p-7 text-left transition hover:-translate-y-1 hover:shadow-xl ${index === 2 ? "border-primary bg-primary text-white" : "border-border bg-card text-primary"}`}>
-                  <div className={`grid h-12 w-12 place-items-center rounded-2xl ${index === 2 ? "bg-white/10 text-accent" : "bg-secondary text-accent"}`}><ServiceIcon service={service} /></div>
-                  <h3 className="mt-8 font-display text-2xl font-semibold">{service.name}</h3>
-                  <p className={`mt-2 text-sm leading-6 ${index === 2 ? "text-white/60" : "text-muted-foreground"}`}>{service.description}</p>
-                  <ChevronRight className="ml-auto mt-5 h-5 w-5 text-accent transition group-hover:translate-x-1" />
+                <button
+                  key={service.id}
+                  onClick={() => navigate(`/book?service=${service.id}`)}
+                  className="group relative min-h-[235px] overflow-hidden rounded-[28px] border border-primary/8 bg-white p-7 text-left transition duration-300 hover:-translate-y-1 hover:border-accent/30 hover:shadow-[0_24px_60px_rgba(13,27,62,0.10)]"
+                >
+                  {/* Decorative number */}
+                  <span className="absolute right-6 top-5 font-mono text-[10px] font-bold tracking-widest text-primary/15">
+                    0{index + 1}
+                  </span>
+
+                  {/* Icon */}
+                  <div className="grid h-12 w-12 place-items-center rounded-2xl bg-[#F4EAD0] text-accent transition duration-300 group-hover:bg-primary group-hover:text-accent">
+                    <ServiceIcon service={service} className="h-5 w-5" />
+                  </div>
+
+                  {/* Content */}
+                  <div className="mt-8 max-w-[260px]">
+                    <h3 className="font-display text-2xl font-semibold text-primary">
+                      {service.name}
+                    </h3>
+
+                    <p className="mt-3 text-sm leading-6 text-muted-foreground">
+                      {service.description}
+                    </p>
+                  </div>
+
+                  {/* Arrow */}
+                  <div className="absolute bottom-6 right-6 grid h-9 w-9 place-items-center rounded-full border border-primary/10 text-primary transition duration-300 group-hover:border-primary group-hover:bg-primary group-hover:text-white">
+                    <ArrowRight className="h-4 w-4 transition group-hover:translate-x-0.5" />
+                  </div>
+
+                  {/* Hover accent */}
+                  <div className="absolute bottom-0 left-0 h-1 w-0 bg-accent transition-all duration-300 group-hover:w-full" />
                 </button>
               ))}
             </div>
+
+            {/* Small reassurance line */}
+            <div className="mt-8 flex flex-wrap items-center gap-x-7 gap-y-3 text-xs text-primary/45">
+              <span className="flex items-center gap-2">
+                <CheckCircle2 className="h-4 w-4 text-accent" />
+                Professionally coordinated
+              </span>
+
+              <span className="flex items-center gap-2">
+                <MessageCircle className="h-4 w-4 text-accent" />
+                Clear communication
+              </span>
+
+              <span className="flex items-center gap-2">
+                <ShieldCheck className="h-4 w-4 text-accent" />
+                Trusted service
+              </span>
+            </div>
+
           </div>
         </section>
 
-        <section className="bg-white px-5 py-24 lg:px-8">
-          <div className="mx-auto grid max-w-[1280px] gap-16 lg:grid-cols-[.8fr_1.2fr]">
-            <SectionTitle eyebrow="How KALA works" title="Delegate with confidence." body="KALA coordinates every request from the first brief to final confirmation. You always know what is happening and who is responsible." />
-            <div className="divide-y divide-border border-y border-border">
-              {["Choose a service", "Tell us what you need", "KALA assigns the right agent", "Track and communicate in real time", "Get the service completed"].map((step, index) => (
-                <div key={step} className="grid grid-cols-[44px_1fr_auto] items-center gap-4 py-5">
-                  <span className="font-mono text-xs text-accent">0{index + 1}</span><p className="font-semibold text-primary">{step}</p><CheckCircle2 className="h-5 w-5 text-primary/25" />
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
+        <section className="bg-white px-5 py-28 lg:px-8">
+  <div className="mx-auto max-w-[1280px]">
 
-        <section className="px-5 py-24 lg:px-8">
-          <div className="mx-auto max-w-[1280px]">
-            <SectionTitle center eyebrow="The KALA standard" title="Serious about the details." />
-            <div className="mt-12 grid gap-5 md:grid-cols-3">
-              {[
-                [ShieldCheck, "Verified people", "Agents are reviewed before they are entrusted with your request."],
-                [MessageCircle, "One clear conversation", "Keep instructions, approvals, images and updates in one place."],
-                [MapPin, "Operational visibility", "Track progress while KALA monitors assignment and delivery."],
-              ].map(([Icon, title, body]: any) => <div key={title} className="rounded-[28px] border border-border bg-white p-8"><Icon className="h-7 w-7 text-accent" /><h3 className="mt-7 font-display text-2xl text-primary">{title}</h3><p className="mt-3 text-sm leading-6 text-muted-foreground">{body}</p></div>)}
-            </div>
-            <div className="mt-20 grid items-center gap-12 rounded-[36px] bg-primary p-8 text-white md:grid-cols-[1.2fr_.8fr] md:p-14">
-              <div><p className="text-xs font-bold uppercase tracking-[.24em] text-accent">Become a KALA agent</p><h2 className="mt-4 font-display text-4xl">Want to earn by helping people?</h2><p className="mt-4 max-w-xl leading-7 text-white/60">Join a professional network, receive work matched to your capabilities, and get paid weekly for completed orders.</p></div>
-              <div className="md:text-right"><Link to="/become-an-agent" className="inline-flex items-center gap-2 rounded-full bg-accent px-7 py-4 font-bold text-primary">Become a KALA Agent <ArrowRight className="h-4 w-4" /></Link></div>
-            </div>
-          </div>
-        </section>
+    <div className="grid gap-14 lg:grid-cols-[0.8fr_1.2fr] lg:gap-20">
 
-        <section className="bg-white px-5 py-24 lg:px-8">
-          <div className="mx-auto max-w-[1040px]">
-            <SectionTitle center eyebrow="Client notes" title="Relief, delivered." />
-            <div className="mt-12 grid gap-5 md:grid-cols-2">
-              {[
-                ["KALA handled my market run while I was at work. I approved everything in chat and the updates were excellent.", "Adaeze O.", "Lekki"],
-                ["It feels less like calling a random rider and more like having a capable operations team on your side.", "Tunde A.", "Abuja"],
-              ].map(([quote, name, place]) => <blockquote key={name} className="rounded-[28px] border border-border bg-background p-8"><div className="flex gap-1 text-accent">{[1,2,3,4,5].map((n)=><Star key={n} className="h-4 w-4 fill-current" />)}</div><p className="mt-6 font-display text-xl leading-8 text-primary">“{quote}”</p><footer className="mt-7 text-sm"><b>{name}</b><span className="ml-2 text-muted-foreground">· {place}</span></footer></blockquote>)}
-            </div>
-          </div>
-        </section>
+      {/* Intro */}
+      <div className="max-w-md">
+        <p className="text-[10px] font-bold uppercase tracking-[0.28em] text-accent">
+          How KALA works
+        </p>
 
-        <section className="px-5 py-24 lg:px-8">
-          <div className="mx-auto grid max-w-[1180px] gap-12 lg:grid-cols-2">
-            <SectionTitle eyebrow="Questions, answered" title="Before you hand us the list." body="Need help with something unusual? Start a booking and describe it. Our operations team will review the request before assignment." />
-            <div className="space-y-3">
-              {["How are agents assigned?", "Can I speak with my assigned agent?", "How do I track my order?", "Can I send purchase images or proof of payment?"].map((q, i) => <details key={q} className="group rounded-2xl border border-border bg-white px-5 py-4" open={i === 0}><summary className="flex cursor-pointer list-none items-center justify-between font-semibold text-primary">{q}<Plus className="h-4 w-4 group-open:rotate-45" /></summary><p className="pt-4 text-sm leading-6 text-muted-foreground">{i === 0 ? "KALA reviews your service, location, timing and requirements, then an admin selects the best verified and available agent." : "Yes. Your order workspace keeps communication and status updates together, with KALA support available when needed."}</p></details>)}
-            </div>
+        <h2 className="mt-4 font-display text-4xl font-semibold leading-tight text-primary sm:text-5xl">
+          Delegate with
+          <br />
+          confidence.
+        </h2>
+
+        <p className="mt-6 text-sm leading-7 text-muted-foreground">
+          You tell us what needs doing. KALA handles the coordination,
+          assigns the right professional and keeps you informed until
+          the service is completed.
+        </p>
+
+        <div className="mt-8 flex items-center gap-3">
+          <div className="grid h-10 w-10 place-items-center rounded-full bg-[#F4EAD0] text-accent">
+            <ShieldCheck className="h-5 w-5" />
           </div>
-        </section>
+
+          <div>
+            <p className="text-sm font-bold text-primary">
+              One team managing your request
+            </p>
+            <p className="mt-1 text-xs text-muted-foreground">
+              From booking to completion.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      {/* Process */}
+      <div className="border-y border-primary/10">
+
+        {[
+          {
+            number: "01",
+            title: "Choose a service",
+            body: "Select the service that matches what you need.",
+            icon: Search,
+          },
+          {
+            number: "02",
+            title: "Tell us what you need",
+            body: "Give us the instructions, location and preferred timing.",
+            icon: FileText,
+          },
+          {
+            number: "03",
+            title: "KALA assigns the right professional",
+            body: "Our operations team reviews your request and assigns a suitable agent.",
+            icon: Users,
+          },
+          {
+            number: "04",
+            title: "Track and communicate",
+            body: "Follow progress, send instructions and communicate through your order.",
+            icon: MessageCircle,
+          },
+          {
+            number: "05",
+            title: "Get it done",
+            body: "The assigned professional completes the request and KALA confirms the outcome.",
+            icon: CheckCircle2,
+          },
+        ].map((step) => {
+          const Icon = step.icon;
+
+          return (
+            <div
+              key={step.number}
+              className="group grid grid-cols-[42px_1fr_34px] items-center gap-4 border-b border-primary/10 py-6 last:border-b-0 sm:grid-cols-[52px_1fr_40px] sm:gap-5"
+            >
+              {/* Number */}
+              <span className="font-mono text-[10px] font-bold tracking-widest text-accent">
+                {step.number}
+              </span>
+
+              {/* Text */}
+              <div>
+                <h3 className="text-sm font-bold text-primary sm:text-base">
+                  {step.title}
+                </h3>
+
+                <p className="mt-1.5 max-w-xl text-xs leading-5 text-muted-foreground sm:text-sm">
+                  {step.body}
+                </p>
+              </div>
+
+              {/* Icon */}
+              <div className="grid h-9 w-9 place-items-center rounded-full border border-primary/10 text-primary/30 transition duration-300 group-hover:border-accent group-hover:bg-accent group-hover:text-primary">
+                <Icon className="h-4 w-4" />
+              </div>
+            </div>
+          );
+        })}
+
+      </div>
+    </div>
+
+    {/* Bottom workflow statement */}
+    <div className="mt-14 rounded-[28px] bg-primary px-7 py-8 text-white sm:px-10">
+      <div className="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
+
+        <div>
+          <p className="text-[10px] font-bold uppercase tracking-[0.25em] text-accent">
+            The KALA model
+          </p>
+
+          <p className="mt-2 font-display text-2xl sm:text-3xl">
+            You request. We coordinate. Your service gets done.
+          </p>
+        </div>
+
+        <button
+          onClick={() => navigate("/book")}
+          className="group inline-flex w-fit shrink-0 items-center gap-2 rounded-full bg-accent px-6 py-3.5 text-sm font-bold text-primary transition hover:-translate-y-0.5 hover:bg-[#e1b43a]"
+        >
+          Book a Service
+          <ArrowRight className="h-4 w-4 transition group-hover:translate-x-1" />
+        </button>
+
+      </div>
+    </div>
+
+  </div>
+</section>
+
+        <section className="bg-[#F7F4EC] px-5 py-28 lg:px-8">
+  <div className="mx-auto max-w-[1280px]">
+
+    {/* Heading */}
+    <div className="mx-auto max-w-2xl text-center">
+      <p className="text-[10px] font-bold uppercase tracking-[0.28em] text-accent">
+        The KALA standard
+      </p>
+
+      <h2 className="mt-4 font-display text-4xl font-semibold leading-tight text-primary sm:text-5xl">
+        Serious about the details.
+      </h2>
+
+      <p className="mx-auto mt-5 max-w-xl text-sm leading-7 text-muted-foreground">
+        Every request is handled with clear communication, professional
+        coordination and operational visibility from start to finish.
+      </p>
+    </div>
+
+    {/* Standards */}
+    <div className="mt-14 grid gap-5 md:grid-cols-3">
+      {[
+        {
+          icon: ShieldCheck,
+          number: "01",
+          title: "Verified professionals",
+          body: "We review the people entrusted with KALA orders so your request is handled by a professional.",
+        },
+        {
+          icon: MessageCircle,
+          number: "02",
+          title: "One clear conversation",
+          body: "Keep instructions, approvals, images and updates connected to the same order.",
+        },
+        {
+          icon: MapPin,
+          number: "03",
+          title: "Operational visibility",
+          body: "KALA monitors the progress of your request while keeping you informed along the way.",
+        },
+      ].map((item) => {
+        const Icon = item.icon;
+
+        return (
+          <div
+            key={item.number}
+            className="group relative overflow-hidden rounded-[28px] border border-primary/8 bg-white p-8 transition duration-300 hover:-translate-y-1 hover:shadow-[0_24px_60px_rgba(13,27,62,0.10)]"
+          >
+            {/* Number */}
+            <span className="absolute right-7 top-6 font-mono text-[10px] font-bold tracking-widest text-primary/15">
+              {item.number}
+            </span>
+
+            {/* Icon */}
+            <div className="grid h-12 w-12 place-items-center rounded-2xl bg-[#F4EAD0] text-accent transition duration-300 group-hover:bg-primary">
+              <Icon className="h-5 w-5 transition group-hover:text-accent" />
+            </div>
+
+            {/* Text */}
+            <h3 className="mt-8 font-display text-2xl font-semibold text-primary">
+              {item.title}
+            </h3>
+
+            <p className="mt-3 text-sm leading-6 text-muted-foreground">
+              {item.body}
+            </p>
+
+            {/* Bottom accent */}
+            <div className="absolute bottom-0 left-0 h-1 w-0 bg-accent transition-all duration-300 group-hover:w-full" />
+          </div>
+        );
+      })}
+    </div>
+
+    {/* Agent CTA */}
+    <div className="relative mt-16 overflow-hidden rounded-[32px] bg-primary px-7 py-10 text-white sm:px-10 sm:py-12">
+      <div className="absolute -right-20 -top-24 h-64 w-64 rounded-full border border-accent/10" />
+      <div className="absolute -bottom-32 right-24 h-64 w-64 rounded-full bg-accent/5 blur-3xl" />
+
+      <div className="relative flex flex-col gap-8 lg:flex-row lg:items-center lg:justify-between">
+
+        <div className="max-w-2xl">
+          <p className="text-[10px] font-bold uppercase tracking-[0.25em] text-accent">
+            Become a KALA agent
+          </p>
+
+          <h2 className="mt-4 font-display text-3xl font-semibold sm:text-4xl">
+            Want to earn by helping people?
+          </h2>
+
+          <p className="mt-4 max-w-xl text-sm leading-7 text-white/55">
+            Join the KALA professional network, receive service requests
+            matched to your capabilities and earn from completed orders.
+          </p>
+        </div>
+
+        <Link
+          to="/become-an-agent"
+          className="group inline-flex w-fit shrink-0 items-center gap-2 rounded-full bg-accent px-7 py-4 text-sm font-bold text-primary transition hover:-translate-y-0.5 hover:bg-[#e1b43a]"
+        >
+          Become a KALA Agent
+          <ArrowRight className="h-4 w-4 transition group-hover:translate-x-1" />
+        </Link>
+
+      </div>
+    </div>
+
+  </div>
+</section>
+
+        <section className="bg-white px-5 py-28 lg:px-8">
+  <div className="mx-auto max-w-[1280px]">
+
+    <div className="grid items-center gap-14 lg:grid-cols-[0.75fr_1.25fr]">
+
+      {/* Intro */}
+      <div className="max-w-md">
+        <p className="text-[10px] font-bold uppercase tracking-[0.28em] text-accent">
+          Why clients choose KALA
+        </p>
+
+        <h2 className="mt-4 font-display text-4xl font-semibold leading-tight text-primary sm:text-5xl">
+          Relief,
+          <br />
+          delivered.
+        </h2>
+
+        <p className="mt-6 text-sm leading-7 text-muted-foreground">
+          You don't need another number to call or another person to
+          coordinate. KALA gives you one place to request a service,
+          communicate, follow progress and get the job completed.
+        </p>
+
+        <button
+          onClick={() => navigate("/book")}
+          className="group mt-8 inline-flex items-center gap-2 rounded-full bg-primary px-6 py-3.5 text-sm font-bold text-white transition hover:-translate-y-0.5 hover:bg-[#162b5d]"
+        >
+          Book a Service
+          <ArrowRight className="h-4 w-4 transition group-hover:translate-x-1" />
+        </button>
+      </div>
+
+      {/* Benefits */}
+      <div className="grid gap-4 sm:grid-cols-2">
+
+        {[
+          {
+            icon: Clock3,
+            title: "Less coordination",
+            body: "Tell KALA what you need once. Our operations team handles the coordination.",
+          },
+          {
+            icon: MessageCircle,
+            title: "Clear communication",
+            body: "Keep instructions, updates, approvals and conversations connected to your order.",
+          },
+          {
+            icon: MapPin,
+            title: "Know what's happening",
+            body: "Follow your request from booking through assignment, execution and completion.",
+          },
+          {
+            icon: ShieldCheck,
+            title: "A team you can rely on",
+            body: "KALA oversees the service while the assigned professional handles the work.",
+          },
+          {
+            icon: FileText,
+            title: "Everything stays connected",
+            body: "Your order details, instructions and service history stay together in one place.",
+          },
+          {
+            icon: CheckCircle2,
+            title: "Completion matters",
+            body: "We don't stop at assignment. KALA follows the request through to the outcome.",
+          },
+        ].map((item) => {
+          const Icon = item.icon;
+
+          return (
+            <div
+              key={item.title}
+              className="group rounded-[26px] border border-primary/8 bg-[#F7F4EC] p-7 transition duration-300 hover:-translate-y-1 hover:bg-white hover:shadow-[0_20px_50px_rgba(13,27,62,0.08)]"
+            >
+              <div className="grid h-11 w-11 place-items-center rounded-2xl bg-white text-accent shadow-sm transition duration-300 group-hover:bg-primary">
+                <Icon className="h-5 w-5 transition group-hover:text-accent" />
+              </div>
+
+              <h3 className="mt-6 font-display text-xl font-semibold text-primary">
+                {item.title}
+              </h3>
+
+              <p className="mt-2 text-sm leading-6 text-muted-foreground">
+                {item.body}
+              </p>
+            </div>
+          );
+        })}
+
+      </div>
+    </div>
+
+  </div>
+</section>
+
+        <section className="bg-[#F7F4EC] px-5 py-28 lg:px-8">
+  <div className="mx-auto grid max-w-[1280px] gap-14 lg:grid-cols-[0.8fr_1.2fr] lg:gap-20">
+
+    {/* FAQ intro */}
+    <div className="max-w-md">
+      <p className="text-[10px] font-bold uppercase tracking-[0.28em] text-accent">
+        Questions, answered
+      </p>
+
+      <h2 className="mt-4 font-display text-4xl font-semibold leading-tight text-primary sm:text-5xl">
+        Before you hand us
+        <br />
+        the list.
+      </h2>
+
+      <p className="mt-6 text-sm leading-7 text-muted-foreground">
+        Need help with something unusual? Start a booking and describe it.
+        Our operations team will review the request before assigning it.
+      </p>
+
+      <button
+        onClick={() => navigate("/book")}
+        className="group mt-8 inline-flex items-center gap-2 rounded-full bg-primary px-6 py-3.5 text-sm font-bold text-white transition hover:-translate-y-0.5 hover:bg-[#162b5d]"
+      >
+        Start a Booking
+        <ArrowRight className="h-4 w-4 transition group-hover:translate-x-1" />
+      </button>
+    </div>
+
+    {/* Questions */}
+    <div className="space-y-3">
+
+      {[
+        {
+          question: "How are agents assigned?",
+          answer:
+            "After you submit a booking, KALA reviews the service, location, timing and requirements. An admin then selects an appropriate verified and available professional and assigns the order.",
+        },
+        {
+          question: "Can I speak with my assigned agent?",
+          answer:
+            "Yes. Once an agent has been assigned, communication can take place through your order workspace. You can exchange messages, instructions, images and relevant files while KALA remains connected to the request.",
+        },
+        {
+          question: "How do I track my order?",
+          answer:
+            "Every booking receives an order reference. Use the Track Order page with your reference and contact details to follow the progress of your request from booking through completion.",
+        },
+        {
+          question: "Can I send purchase images or proof of payment?",
+          answer:
+            "Yes. For services that involve purchases or payments, your order workspace can be used to share relevant images, receipts and proof of payment so the request remains properly documented.",
+        },
+        {
+          question: "What happens if the assigned agent cannot complete the request?",
+          answer:
+            "KALA's operations team can review the situation and reassign the order when necessary. The goal is to keep responsibility with KALA rather than leaving you to coordinate a replacement yourself.",
+        },
+        {
+          question: "Can I continue the conversation on WhatsApp?",
+          answer:
+            "Where appropriate, KALA can provide a WhatsApp option for continued communication. Your order remains the primary reference for the service and its progress.",
+        },
+      ].map((item, index) => (
+        <details
+          key={item.question}
+          open={index === 0}
+          className="group rounded-2xl border border-primary/8 bg-white px-6 transition duration-300 open:shadow-[0_16px_40px_rgba(13,27,62,0.06)]"
+        >
+          <summary className="flex cursor-pointer list-none items-center justify-between gap-6 py-5 text-sm font-bold text-primary [&::-webkit-details-marker]:hidden">
+            <span>{item.question}</span>
+
+            <span className="grid h-7 w-7 shrink-0 place-items-center rounded-full border border-primary/10 text-primary/50 transition duration-300 group-open:rotate-45 group-open:border-accent group-open:bg-accent group-open:text-primary">
+              <Plus className="h-4 w-4" />
+            </span>
+          </summary>
+
+          <div className="max-w-2xl pb-6 pr-10">
+            <p className="text-sm leading-7 text-muted-foreground">
+              {item.answer}
+            </p>
+          </div>
+        </details>
+      ))}
+
+    </div>
+  </div>
+</section>
       </main>
       <Footer />
     </div>
@@ -240,14 +814,171 @@ function HomePage() {
 
 function Footer() {
   return (
-    <footer className="bg-[#071126] px-5 py-14 text-white lg:px-8">
-      <div className="mx-auto grid max-w-[1280px] gap-10 md:grid-cols-[1.4fr_1fr_1fr]">
-        <div><Logo /><p className="mt-5 max-w-sm text-sm leading-6 text-white/45">Reliable service coordination for busy people across Nigeria.</p></div>
-        <div><p className="text-xs font-bold uppercase tracking-[.2em] text-accent">Navigate</p><div className="mt-5 grid gap-3 text-sm text-white/60"><Link to="/services">Services</Link><Link to="/track">Track an order</Link><Link to="/agent">Agent portal</Link></div></div>
-        <div><p className="text-xs font-bold uppercase tracking-[.2em] text-accent">Support</p><p className="mt-5 text-sm text-white/60">0706 576 4557<br />support@kala.com.ng</p></div>
+    <footer className="bg-[#071126] px-5 py-16 text-white lg:px-8">
+  <div className="mx-auto max-w-[1280px]">
+
+    {/* Main footer */}
+    <div className="grid gap-12 md:grid-cols-[1.4fr_.7fr_.7fr_.8fr]">
+
+      {/* Brand */}
+      <div className="max-w-sm">
+        <Link to="/" className="inline-flex items-center gap-3">
+          <div className="grid h-10 w-10 place-items-center rounded-full border border-accent/50 text-accent">
+            <span className="font-display text-lg italic">K</span>
+          </div>
+
+          <div>
+            <div className="font-display text-xl font-semibold tracking-wide">
+              KALA
+            </div>
+
+            <div className="text-[8px] font-bold uppercase tracking-[0.3em] text-white/40">
+              Concierge
+            </div>
+          </div>
+        </Link>
+
+        <p className="mt-6 max-w-xs text-sm leading-6 text-white/45">
+          Reliable service coordination for busy people across Nigeria.
+          Tell us what needs doing. We'll coordinate the rest.
+        </p>
+
+        <button
+          onClick={() => navigate("/book")}
+          className="group mt-7 inline-flex items-center gap-2 rounded-full bg-accent px-5 py-3 text-xs font-bold text-primary transition hover:-translate-y-0.5 hover:bg-[#e1b43a]"
+        >
+          Book a Service
+          <ArrowRight className="h-3.5 w-3.5 transition group-hover:translate-x-1" />
+        </button>
       </div>
-      <div className="mx-auto mt-12 max-w-[1280px] border-t border-white/10 pt-6 text-xs text-white/35">© 2026 KALA · Built for Nigeria</div>
-    </footer>
+
+      {/* Navigate */}
+      <div>
+        <p className="text-[9px] font-bold uppercase tracking-[0.25em] text-accent">
+          Navigate
+        </p>
+
+        <div className="mt-5 space-y-3 text-sm text-white/55">
+          <Link
+            to="/services"
+            className="block transition hover:text-white"
+          >
+            Services
+          </Link>
+
+          <Link
+            to="/book"
+            className="block transition hover:text-white"
+          >
+            Book a service
+          </Link>
+
+          <Link
+            to="/track"
+            className="block transition hover:text-white"
+          >
+            Track an order
+          </Link>
+
+          <Link
+            to="/become-an-agent"
+            className="block transition hover:text-white"
+          >
+            Become an agent
+          </Link>
+        </div>
+      </div>
+
+      {/* Services */}
+      <div>
+        <p className="text-[9px] font-bold uppercase tracking-[0.25em] text-accent">
+          Services
+        </p>
+
+        <div className="mt-5 space-y-3 text-sm text-white/55">
+  <button
+    onClick={() => navigate("/book?service=tour-guide")}
+    className="block text-left transition hover:text-white"
+  >
+    Tour Guide
+  </button>
+
+  <button
+    onClick={() => navigate("/book?service=house-cleaning")}
+    className="block text-left transition hover:text-white"
+  >
+    House Cleaning
+  </button>
+
+  <button
+    onClick={() => navigate("/book?service=pick-up-delivery")}
+    className="block text-left transition hover:text-white"
+  >
+    Pick Up & Delivery
+  </button>
+
+  <button
+    onClick={() => navigate("/book?service=grocery-shopping")}
+    className="block text-left transition hover:text-white"
+  >
+    Grocery Shopping
+  </button>
+</div>
+      </div>
+
+      {/* Support */}
+      <div>
+        <p className="text-[9px] font-bold uppercase tracking-[0.25em] text-accent">
+          Support
+        </p>
+
+        <div className="mt-5 space-y-4 text-sm text-white/55">
+          <a
+            href="tel:+2340000000000"
+            className="block transition hover:text-white"
+          >
+            Call KALA
+          </a>
+
+          <a
+            href="mailto:support@kala.com.ng"
+            className="block transition hover:text-white"
+          >
+            support@kala.com.ng
+          </a>
+
+          <Link
+            to="/track"
+            className="flex items-center gap-2 transition hover:text-white"
+          >
+            <MapPin className="h-4 w-4 text-accent" />
+            Track your order
+          </Link>
+        </div>
+      </div>
+
+    </div>
+
+    {/* Bottom bar */}
+    <div className="mt-14 flex flex-col gap-4 border-t border-white/10 pt-6 text-[10px] text-white/30 sm:flex-row sm:items-center sm:justify-between">
+      <span>
+        © 2026 KALA. Built with ❤️ by <a
+            href="https://github.com/jameskingwebdev"
+            className="transition hover:text-white text-[9px] font-bold uppercase tracking-[0.25em] text-accent"
+          >
+            James King
+          </a>
+      </span>
+
+      <div className="flex gap-5">
+        <span>Service coordination</span>
+        <span>Client support</span>
+        <span>Professional network</span>
+      </div>
+    </div>
+
+  </div>
+</footer>
   );
 }
 
@@ -294,9 +1025,34 @@ function BookingPage() {
   return (
     <div className="min-h-screen bg-background"><Navbar />
       <div className="mx-auto max-w-[1180px] px-5 py-10 lg:px-8 lg:py-16">
-        <div className="mb-10 flex items-end justify-between gap-6">
-          <SectionTitle eyebrow="Service booking" title="Tell us what you need." body="We will review the details and assign the right verified agent. You are never choosing from a public directory." />
-          <div className="hidden text-right text-xs text-muted-foreground sm:block"><span className="font-bold text-accent">01</span> Details&nbsp;&nbsp;→&nbsp;&nbsp;<span className={review ? "font-bold text-accent" : ""}>02</span> Review</div>
+        <div className="mb-10 flex flex-col gap-7 sm:flex-row sm:items-end sm:justify-between">
+          <div className="max-w-2xl">
+            <p className="text-[10px] font-bold uppercase tracking-[0.28em] text-accent">
+              KALA service request
+            </p>
+
+            <h1 className="mt-3 font-display text-4xl font-semibold leading-tight text-primary sm:text-5xl">
+              Tell us what needs doing.
+            </h1>
+
+            <p className="mt-5 max-w-xl text-sm leading-7 text-muted-foreground">
+              Give us the details of your request and our operations team will
+              review it, coordinate the right professional and keep you informed
+              through completion.
+            </p>
+          </div>
+
+          <div className="hidden shrink-0 text-right text-xs text-muted-foreground sm:block">
+            <div className="flex items-center gap-2">
+              <span className="font-bold text-accent">01</span>
+              <span>Details</span>
+              <span className="mx-1 text-primary/20">→</span>
+              <span className={review ? "font-bold text-accent" : "text-primary/30"}>
+                02
+              </span>
+              <span>Review</span>
+            </div>
+          </div>
         </div>
         <div className="grid gap-8 lg:grid-cols-[1fr_360px]">
           <form onSubmit={(e) => { e.preventDefault(); setReview(true); }} className="rounded-[30px] border border-border bg-white p-6 shadow-sm sm:p-8">
@@ -309,21 +1065,223 @@ function BookingPage() {
             <div className="my-8 h-px bg-border" />
             <h3 className="font-display text-2xl text-primary">Service details</h3>
             <div className="mt-6 grid gap-5 sm:grid-cols-2">
-              <label className="text-sm font-semibold sm:col-span-2">Selected service<select value={form.service_id || ""} onChange={(e) => set("service_id", e.target.value)} className={fieldStyle}>{services.map((s) => <option key={s.id} value={s.id}>{s.name}</option>)}</select></label>
-              {specific.map(([key, label], index) => <label key={key} className={`text-sm font-semibold ${index === specific.length - 1 && specific.length % 2 ? "sm:col-span-2" : ""}`}>{label}<input required={index === 0} value={form[key] || ""} onChange={(e) => set(key, e.target.value)} className={fieldStyle} /></label>)}
+              <label className="sm:col-span-2">
+                <span className="mb-2 block text-sm font-bold text-primary">
+                  What service do you need?
+                </span>
+
+                <select
+                  value={form.service_id || ""}
+                  onChange={(e) => set("service_id", e.target.value)}
+                  className={`${fieldStyle} border-primary/20 bg-[#F7F4EC] font-semibold text-primary`}
+                >
+                  {services.map((s) => (
+                    <option key={s.id} value={s.id}>
+                      {s.name}
+                    </option>
+                  ))}
+                </select>
+
+                <span className="mt-2 block text-xs text-muted-foreground">
+                  Choose the service that best describes what you need. KALA will handle
+                  the professional assignment.
+                </span>
+              </label>
+              {specific.map(([key, label], index) => {
+  const isLongText =
+    key === "shopping_list" ||
+    key === "cleaning_requirements" ||
+    key === "package_description" ||
+    key === "items_required" ||
+    key === "errand_details";
+
+  const isNumber =
+    key === "budget" ||
+    key === "rooms" ||
+    key === "party_size";
+
+  const fullWidth =
+    isLongText ||
+    (index === specific.length - 1 && specific.length % 2 !== 0);
+
+  return (
+    <label
+      key={key}
+      className={`text-sm font-semibold ${fullWidth ? "sm:col-span-2" : ""}`}
+    >
+      <span className="mb-2 block text-primary">
+        {label}
+      </span>
+
+      {isLongText ? (
+        <textarea
+          required={index === 0}
+          rows={3}
+          value={form[key] || ""}
+          onChange={(e) => set(key, e.target.value)}
+          className={fieldStyle}
+          placeholder={
+            key === "shopping_list"
+              ? "List the items you need..."
+              : key === "items_required"
+                ? "List the items you need us to get..."
+                : key === "package_description"
+                  ? "Describe the package or item..."
+                  : key === "cleaning_requirements"
+                    ? "Tell us about any specific cleaning requirements..."
+                    : "Describe what you need us to do..."
+          }
+        />
+      ) : (
+        <input
+          required={index === 0}
+          type={isNumber ? "number" : "text"}
+          min={isNumber ? "1" : undefined}
+          value={form[key] || ""}
+          onChange={(e) => set(key, e.target.value)}
+          className={fieldStyle}
+          placeholder={
+            key === "budget"
+              ? "Enter your budget in ₦"
+              : key === "rooms"
+                ? "e.g. 3"
+                : key === "party_size"
+                  ? "e.g. 4"
+                  : key === "preferred_store"
+                    ? "e.g. Shoprite, local market..."
+                    : key === "market_preference"
+                      ? "Which market would you prefer?"
+                      : key === "property_type"
+                        ? "e.g. Apartment, duplex, office..."
+                        : key === "duration"
+                          ? "e.g. 3 hours"
+                          : undefined
+          }
+        />
+      )}
+    </label>
+  );
+})}
               <label className="text-sm font-semibold sm:col-span-2">Additional instructions<textarea rows={3} value={form.special_instructions || ""} onChange={(e) => set("special_instructions", e.target.value)} className={fieldStyle} placeholder="Access notes, preferences, or anything else we should know" /></label>
             </div>
             <div className="my-8 h-px bg-border" />
-            <h3 className="font-display text-2xl text-primary">Location & schedule</h3>
-            <div className="mt-6 grid gap-5 sm:grid-cols-2">
-              <label className="text-sm font-semibold sm:col-span-2">Current address<input required value={form.address || ""} onChange={(e) => set("address", e.target.value)} className={fieldStyle} placeholder="Street and landmark" /></label>
-              <label className="text-sm font-semibold">LGA / area<input required value={form.lga || ""} onChange={(e) => set("lga", e.target.value)} className={fieldStyle} placeholder="e.g. Eti-Osa" /></label>
-              <label className="text-sm font-semibold">State<input required value={form.state || ""} onChange={(e) => set("state", e.target.value)} className={fieldStyle} placeholder="e.g. Lagos" /></label>
-              <label className="text-sm font-semibold">Preferred date<input required={!form.flexible_schedule} type="date" value={form.preferred_date || ""} onChange={(e) => set("preferred_date", e.target.value)} className={fieldStyle} /></label>
-              <label className="text-sm font-semibold">Preferred time<input required={!form.flexible_schedule} type="time" value={form.preferred_time || ""} onChange={(e) => set("preferred_time", e.target.value)} className={fieldStyle} /></label>
-              <label className="flex items-center gap-3 text-sm sm:col-span-2"><input type="checkbox" checked={form.flexible_schedule} onChange={(e) => set("flexible_schedule", e.target.checked)} className="h-5 w-5 accent-[#C9960A]" /> My schedule is flexible</label>
-            </div>
-            <button className="mt-8 flex w-full items-center justify-center gap-2 rounded-2xl bg-primary py-4 font-bold text-white">Review booking <ArrowRight className="h-4 w-4" /></button>
+            <h3 className="font-display text-2xl text-primary">
+  Where and when?
+</h3>
+
+<p className="mt-2 max-w-xl text-sm leading-6 text-muted-foreground">
+  Tell us where the service will happen and when you would like it handled.
+  These details help our operations team coordinate the right professional.
+</p>
+
+<div className="mt-6 grid gap-5 sm:grid-cols-2">
+  <label className="text-sm font-semibold sm:col-span-2">
+    <span className="mb-2 block text-primary">
+      Service address
+    </span>
+
+    <input
+      required
+      value={form.address || ""}
+      onChange={(e) => set("address", e.target.value)}
+      className={fieldStyle}
+      placeholder="Street address, landmark or detailed location"
+    />
+
+    <span className="mt-2 block text-xs font-normal text-muted-foreground">
+      Provide enough detail for the assigned professional to find the location.
+    </span>
+  </label>
+
+  <label className="text-sm font-semibold">
+    <span className="mb-2 block text-primary">
+      LGA / Area
+    </span>
+
+    <input
+      required
+      value={form.lga || ""}
+      onChange={(e) => set("lga", e.target.value)}
+      className={fieldStyle}
+      placeholder="e.g. Aba North"
+    />
+  </label>
+
+  <label className="text-sm font-semibold">
+    <span className="mb-2 block text-primary">
+      State
+    </span>
+
+    <input
+      required
+      value={form.state || ""}
+      onChange={(e) => set("state", e.target.value)}
+      className={fieldStyle}
+      placeholder="e.g. Abia"
+    />
+  </label>
+
+  <label className="text-sm font-semibold">
+    <span className="mb-2 block text-primary">
+      Preferred date
+    </span>
+
+    <input
+      required={!form.flexible_schedule}
+      type="date"
+      value={form.preferred_date || ""}
+      onChange={(e) => set("preferred_date", e.target.value)}
+      className={fieldStyle}
+    />
+  </label>
+
+  <label className="text-sm font-semibold">
+    <span className="mb-2 block text-primary">
+      Preferred time
+    </span>
+
+    <input
+      required={!form.flexible_schedule}
+      type="time"
+      value={form.preferred_time || ""}
+      onChange={(e) => set("preferred_time", e.target.value)}
+      className={fieldStyle}
+    />
+  </label>
+
+  <label className="flex cursor-pointer items-start gap-3 rounded-2xl border border-primary/10 bg-[#F7F4EC] p-4 text-sm sm:col-span-2">
+    <input
+      type="checkbox"
+      checked={form.flexible_schedule}
+      onChange={(e) => set("flexible_schedule", e.target.checked)}
+      className="mt-0.5 h-5 w-5 shrink-0 accent-[#C9960A]"
+    />
+
+    <span>
+      <span className="block font-bold text-primary">
+        My schedule is flexible
+      </span>
+
+      <span className="mt-1 block text-xs font-normal leading-5 text-muted-foreground">
+        KALA can coordinate the request around the availability of the
+        appropriate professional.
+      </span>
+    </span>
+  </label>
+</div>
+            <div className="mt-8">
+  <button
+    type="submit"
+    className="group flex w-full items-center justify-center gap-2 rounded-2xl bg-primary py-4 font-bold text-white transition hover:-translate-y-0.5 hover:bg-[#162b5d]"
+  >
+    Review your request
+    <ArrowRight className="h-4 w-4 transition group-hover:translate-x-1" />
+  </button>
+
+  <p className="mt-3 text-center text-xs leading-5 text-muted-foreground">
+    You will review all your details before the request is sent to KALA.
+  </p>
+</div>
           </form>
           <aside className="h-fit rounded-[30px] bg-primary p-7 text-white lg:sticky lg:top-24">
             <p className="text-xs font-bold uppercase tracking-[.2em] text-accent">Your request</p>
@@ -339,12 +1297,281 @@ function BookingPage() {
 }
 
 function ReviewModal({ form, service, onClose, onConfirm, saving }: any) {
-  return <div className="fixed inset-0 z-[80] grid place-items-center bg-[#071126]/75 p-4 backdrop-blur-sm"><div className="max-h-[90vh] w-full max-w-xl overflow-y-auto rounded-[30px] bg-white p-7 shadow-2xl"><div className="flex items-start justify-between"><div><p className="text-xs font-bold uppercase tracking-[.2em] text-accent">Review order</p><h2 className="mt-2 font-display text-3xl text-primary">Everything look right?</h2></div><button onClick={onClose} className="rounded-full bg-secondary p-2"><X className="h-5 w-5" /></button></div><div className="mt-7 divide-y divide-border rounded-2xl border border-border px-5">{[["Service", service?.name], ["Client", form.client_name], ["Contact", `${form.client_phone} · ${form.client_email}`], ["Location", `${form.address}, ${form.lga}, ${form.state}`], ["Schedule", form.flexible_schedule ? "Flexible" : `${form.preferred_date} at ${form.preferred_time}`], ["Instructions", form.special_instructions || "None"]].map(([k,v]) => <div key={k} className="grid grid-cols-[110px_1fr] gap-4 py-4 text-sm"><span className="text-muted-foreground">{k}</span><b className="text-primary">{v}</b></div>)}</div><button disabled={saving} onClick={onConfirm} className="mt-6 flex w-full items-center justify-center gap-2 rounded-2xl bg-accent py-4 font-bold text-primary disabled:opacity-50">{saving ? "Creating order…" : "Complete Booking"} <Check className="h-4 w-4" /></button></div></div>;
+  const serviceData = service
+    ? {
+        name: service.name,
+        description: service.description,
+      }
+    : null;
+
+  const details = [
+    ["Client", form.client_name],
+    ["Phone", form.client_phone],
+    ["Email", form.client_email],
+    ["Location", `${form.address}, ${form.lga}, ${form.state}`],
+    [
+      "Schedule",
+      form.flexible_schedule
+        ? "Flexible schedule"
+        : `${form.preferred_date} at ${form.preferred_time}`,
+    ],
+    ["Instructions", form.special_instructions || "None"],
+  ];
+
+  return (
+    <div className="fixed inset-0 z-[80] grid place-items-center bg-[#071126]/75 p-4 backdrop-blur-sm">
+      <div className="max-h-[90vh] w-full max-w-2xl overflow-y-auto rounded-[30px] bg-white p-6 shadow-2xl sm:p-8">
+
+        {/* Header */}
+        <div className="flex items-start justify-between gap-6">
+          <div>
+            <p className="text-[10px] font-bold uppercase tracking-[0.28em] text-accent">
+              Review your request
+            </p>
+
+            <h2 className="mt-2 font-display text-3xl font-semibold text-primary sm:text-4xl">
+              Everything look right?
+            </h2>
+
+            <p className="mt-3 max-w-lg text-sm leading-6 text-muted-foreground">
+              Check your details before sending the request to KALA.
+              You can go back and make changes if anything needs updating.
+            </p>
+          </div>
+
+          <button
+            onClick={onClose}
+            type="button"
+            className="shrink-0 rounded-full bg-secondary p-2 text-primary transition hover:bg-primary hover:text-white"
+          >
+            <X className="h-5 w-5" />
+          </button>
+        </div>
+
+        {/* Selected service */}
+        <div className="mt-7 rounded-[24px] bg-primary p-5 text-white">
+          <p className="text-[9px] font-bold uppercase tracking-[0.25em] text-accent">
+            Selected service
+          </p>
+
+          <div className="mt-4 flex items-center gap-4">
+            <div className="grid h-12 w-12 shrink-0 place-items-center rounded-2xl bg-white/10 text-accent">
+              {service && <ServiceIcon service={service} />}
+            </div>
+
+            <div>
+              <h3 className="font-display text-2xl font-semibold">
+                {serviceData?.name || "KALA service"}
+              </h3>
+
+              <p className="mt-1 text-xs leading-5 text-white/50">
+                {serviceData?.description ||
+                  "Your request will be reviewed by KALA operations."}
+              </p>
+            </div>
+          </div>
+        </div>
+
+        {/* Booking details */}
+        <div className="mt-5 overflow-hidden rounded-[24px] border border-primary/10">
+          <div className="border-b border-primary/10 bg-[#F7F4EC] px-5 py-4">
+            <p className="text-[9px] font-bold uppercase tracking-[0.25em] text-accent">
+              Request details
+            </p>
+          </div>
+
+          <div className="divide-y divide-primary/8 px-5">
+            {details.map(([key, value]) => (
+              <div
+                key={key}
+                className="grid gap-2 py-4 sm:grid-cols-[120px_1fr] sm:gap-5"
+              >
+                <span className="text-xs font-medium text-muted-foreground">
+                  {key}
+                </span>
+
+                <span className="break-words text-sm font-semibold leading-6 text-primary">
+                  {value || "Not provided"}
+                </span>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* KALA process note */}
+        <div className="mt-5 rounded-[22px] border border-accent/20 bg-accent/5 p-5">
+          <div className="flex gap-3">
+            <ShieldCheck className="mt-0.5 h-5 w-5 shrink-0 text-accent" />
+
+            <div>
+              <p className="text-sm font-bold text-primary">
+                What happens next?
+              </p>
+
+              <p className="mt-1 text-xs leading-6 text-muted-foreground">
+                Once you confirm, KALA will create your order and our
+                operations team will review the request before assigning
+                the appropriate professional.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        {/* Actions */}
+        <div className="mt-6 flex flex-col-reverse gap-3 sm:flex-row">
+          <button
+            type="button"
+            onClick={onClose}
+            disabled={saving}
+            className="flex flex-1 items-center justify-center rounded-2xl border border-primary/10 py-4 text-sm font-bold text-primary transition hover:bg-secondary disabled:opacity-50"
+          >
+            Go back & edit
+          </button>
+
+          <button
+            type="button"
+            disabled={saving}
+            onClick={onConfirm}
+            className="group flex flex-1 items-center justify-center gap-2 rounded-2xl bg-accent py-4 text-sm font-bold text-primary transition hover:-translate-y-0.5 hover:bg-[#e1b43a] disabled:cursor-not-allowed disabled:opacity-50"
+          >
+            {saving ? "Creating order…" : "Confirm & submit request"}
+
+            {!saving && (
+              <Check className="h-4 w-4 transition group-hover:scale-110" />
+            )}
+          </button>
+        </div>
+
+        <p className="mt-4 text-center text-[11px] leading-5 text-muted-foreground">
+          Your request is not submitted until you click
+          <span className="font-semibold text-primary">
+            {" "}“Confirm & submit request”
+          </span>.
+        </p>
+
+      </div>
+    </div>
+  );
 }
 
 function Confirmation({ reference, service }: { reference: string; service: string }) {
   const { navigate } = useNav();
-  return <div className="min-h-screen bg-primary px-5 py-20 text-white"><div className="mx-auto max-w-2xl text-center"><Logo /><div className="mx-auto mt-20 grid h-20 w-20 place-items-center rounded-full bg-accent text-primary"><Check className="h-10 w-10" /></div><p className="mt-8 text-xs font-bold uppercase tracking-[.25em] text-accent">Booking received</p><h1 className="mt-4 font-display text-5xl">We have your request.</h1><p className="mx-auto mt-5 max-w-lg leading-7 text-white/60">Your {service} order is now with the KALA operations team. Keep this reference safe.</p><div className="mx-auto mt-8 max-w-sm rounded-2xl border border-white/10 bg-white/5 p-5"><p className="text-xs text-white/45">ORDER REFERENCE</p><p className="mt-2 font-mono text-2xl font-bold tracking-wider text-accent">{reference}</p></div><button onClick={() => navigate(`/track?reference=${reference}`)} className="mt-8 rounded-full bg-accent px-8 py-4 font-bold text-primary">Track Order</button></div></div>;
+
+  return (
+    <div className="min-h-screen bg-[#F7F4EC]">
+      <Navbar />
+
+      <main className="mx-auto flex min-h-[calc(100vh-80px)] max-w-3xl items-center px-5 py-12 lg:px-8">
+        <div className="w-full rounded-[32px] border border-primary/10 bg-white p-7 text-center shadow-[0_24px_80px_rgba(13,27,62,0.10)] sm:p-10">
+
+          {/* Success icon */}
+          <div className="mx-auto grid h-20 w-20 place-items-center rounded-full bg-accent/15">
+            <CheckCircle2 className="h-10 w-10 text-accent" />
+          </div>
+
+          {/* Heading */}
+          <p className="mt-7 text-[10px] font-bold uppercase tracking-[0.28em] text-accent">
+            Request received
+          </p>
+
+          <h1 className="mt-3 font-display text-4xl font-semibold leading-tight text-primary sm:text-5xl">
+            We have your request.
+          </h1>
+
+          <p className="mx-auto mt-5 max-w-xl text-sm leading-7 text-muted-foreground">
+            Your KALA service request has been successfully submitted.
+            Our operations team will review the request and coordinate the
+            appropriate professional for you.
+          </p>
+
+          {/* Reference */}
+          <div className="mx-auto mt-8 max-w-md rounded-[24px] border border-accent/25 bg-[#F7F4EC] p-6">
+            <p className="text-[10px] font-bold uppercase tracking-[0.22em] text-muted-foreground">
+              Your order reference
+            </p>
+
+            <p className="mt-3 break-all font-mono text-2xl font-bold tracking-wider text-primary">
+              {reference}
+            </p>
+
+            <p className="mt-3 text-xs leading-5 text-muted-foreground">
+              Keep this reference safe. You can use it to track your order
+              and communicate with KALA about this request.
+            </p>
+          </div>
+
+          {/* Service */}
+          <div className="mx-auto mt-5 flex max-w-md items-center gap-4 rounded-[22px] border border-primary/10 p-4 text-left">
+            <div className="grid h-11 w-11 shrink-0 place-items-center rounded-xl bg-primary text-accent">
+              <Check className="h-5 w-5" />
+            </div>
+
+            <div className="min-w-0">
+              <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-muted-foreground">
+                Service requested
+              </p>
+
+              <p className="mt-1 truncate font-semibold text-primary">
+                {service}
+              </p>
+            </div>
+          </div>
+
+          {/* What happens next */}
+          <div className="mx-auto mt-8 max-w-xl rounded-[24px] bg-primary p-6 text-left text-white">
+            <p className="text-[10px] font-bold uppercase tracking-[0.22em] text-accent">
+              What happens next?
+            </p>
+
+            <div className="mt-5 space-y-5">
+              {[
+                ["01", "KALA reviews your request", "Our operations team checks the details and requirements."],
+                ["02", "A professional is assigned", "We select the appropriate verified professional for your request."],
+                ["03", "You stay informed", "You can track the order and communicate through your order."],
+              ].map(([number, title, description]) => (
+                <div key={number} className="flex gap-4">
+                  <span className="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-white/10 text-xs font-bold text-accent">
+                    {number}
+                  </span>
+
+                  <div>
+                    <p className="text-sm font-bold">{title}</p>
+                    <p className="mt-1 text-xs leading-5 text-white/50">
+                      {description}
+                    </p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Actions */}
+          <div className="mx-auto mt-8 flex max-w-xl flex-col gap-3 sm:flex-row">
+            <button
+              type="button"
+              onClick={() => navigate(`/track/${reference}`)}
+              className="group flex flex-1 items-center justify-center gap-2 rounded-2xl bg-accent py-4 text-sm font-bold text-primary transition hover:-translate-y-0.5 hover:bg-[#e1b43a]"
+            >
+              Track this order
+              <ArrowRight className="h-4 w-4 transition group-hover:translate-x-1" />
+            </button>
+
+            <button
+              type="button"
+              onClick={() => navigate("/")}
+              className="flex flex-1 items-center justify-center rounded-2xl border border-primary/10 py-4 text-sm font-bold text-primary transition hover:bg-secondary"
+            >
+              Return to KALA
+            </button>
+          </div>
+
+          <p className="mt-6 text-xs leading-5 text-muted-foreground">
+            Need help? Contact KALA support and provide your order reference.
+          </p>
+        </div>
+      </main>
+    </div>
+  );
 }
 
 const statusSteps = ["PENDING", "REVIEWING", "ASSIGNED", "ACCEPTED", "IN_PROGRESS", "AWAITING_CLIENT", "COMPLETED", "CONFIRMED"];
@@ -374,9 +1601,49 @@ function AdminPage() {
   const [agents, setAgents] = useState<any[]>([]);
   const [payment, setPayment] = useState("8500");
   const [tab, setTab] = useState("ACTIVE");
+  const [chatMessages, setChatMessages] = useState<any[]>([]);
+const [chatLoading, setChatLoading] = useState(false);
+const [chatError, setChatError] = useState("");
   const load = async (adminPin = pin) => { const result = await adminApi.getOrders(adminPin); setOrders(result.orders || []); setSelected(result.orders?.[0] || null); };
   useEffect(() => { if (pin) load().catch(() => setPin("")); }, [pin]);
   const login = async (e: FormEvent) => { e.preventDefault(); try { await adminApi.login(input); try { sessionStorage.setItem("kala_ops_pin", input); } catch {} setPin(input); } catch { alert("Incorrect PIN"); } };
+  useEffect(() => {
+  if (!selected?.id || !pin) {
+    setChatMessages([]);
+    return;
+  }
+
+  let cancelled = false;
+
+  const loadMessages = async () => {
+    setChatLoading(true);
+    setChatError("");
+
+    try {
+      const result = await adminApi.getMessages(selected.id, pin);
+
+      if (!cancelled) {
+        setChatMessages(result.messages || []);
+      }
+    } catch (error: any) {
+      if (!cancelled) {
+        setChatError(error?.message || "Unable to load conversation.");
+        setChatMessages([]);
+      }
+    } finally {
+      if (!cancelled) {
+        setChatLoading(false);
+      }
+    }
+  };
+
+  loadMessages();
+
+  return () => {
+    cancelled = true;
+  };
+}, [selected?.id, pin]);
+
   useEffect(() => { if (selected && pin) adminApi.getSuggestedAgents(selected.id, pin).then((r)=>setAgents(r.agents || [])).catch(()=>setAgents([])); }, [selected, pin]);
   const assign = async (agentId: string) => { if (!selected) return; await adminApi.assignOrder(selected.id, agentId, Number(payment), pin); await load(); };
   if (!pin) return <div className="grid min-h-screen place-items-center bg-primary p-5"><form onSubmit={login} className="w-full max-w-sm rounded-[30px] bg-white p-8 text-center"><div className="mx-auto grid h-14 w-14 place-items-center rounded-2xl bg-secondary text-accent"><ShieldCheck /></div><h1 className="mt-6 font-display text-3xl text-primary">Operations access</h1><p className="mt-2 text-sm text-muted-foreground">Enter your admin PIN to continue.</p><input required type="password" inputMode="numeric" value={input} onChange={(e)=>setInput(e.target.value)} className={`${fieldStyle} text-center text-xl tracking-[.4em]`} placeholder="••••" /><button className="mt-4 w-full rounded-2xl bg-primary py-3.5 font-bold text-white">Enter workspace</button><Link to="/" className="mt-5 block text-xs text-muted-foreground">Return to KALA</Link></form></div>;
@@ -390,7 +1657,21 @@ function AdminPage() {
         <div className="border-t border-border p-4"><div className="rounded-2xl bg-primary p-4 text-xs text-white/60"><Headphones className="mb-3 h-5 w-5 text-accent" /> WhatsApp relay is handled securely by the KALA backend.</div></div>
       </aside>
       <main className="min-w-0 p-4 sm:p-6">
-        <div className="flex flex-wrap items-center justify-between gap-4"><div><p className="text-xs font-bold uppercase tracking-[.2em] text-accent">Operations workspace</p><h1 className="font-display text-3xl text-primary">Orders</h1></div><div className="flex gap-2 overflow-auto">{["Overview","Clients","Orders","Agents","Services","Live Map","Payments","Complaints"].map(x=><button key={x} className={`shrink-0 rounded-full px-4 py-2 text-xs font-semibold ${x==="Orders"?"bg-primary text-white":"bg-white text-muted-foreground"}`}>{x}</button>)}</div></div>
+        <div className="flex flex-wrap items-center justify-between gap-4"><div><p className="text-xs font-bold uppercase tracking-[.2em] text-accent">Operations workspace</p><h1 className="font-display text-3xl text-primary">Orders</h1></div><div className="flex gap-2 overflow-auto">{["Overview","Clients","Orders","Agents","Services","Live Map","Payments","Complaints"].map(x=><button
+  key={x}
+  onClick={() => {
+    if (x === "Agents") {
+      alert("Agents workspace coming next");
+    }
+  }}
+  className={`shrink-0 rounded-full px-4 py-2 text-xs font-semibold ${
+    x === "Orders"
+      ? "bg-primary text-white"
+      : "bg-white text-muted-foreground"
+  }`}
+>
+  {x}
+</button>)}</div></div>
         <div className="mt-6 grid gap-5 xl:grid-cols-[340px_1fr]">
           <div className="rounded-[24px] bg-white p-3"><div className="grid grid-cols-3 gap-1 rounded-xl bg-secondary/60 p-1">{["ACTIVE","ATTENDED","PENDING"].map(x=><button key={x} onClick={()=>setTab(x)} className={`rounded-lg px-2 py-2 text-[10px] font-bold ${tab===x?"bg-white text-primary shadow-sm":"text-muted-foreground"}`}>{x}</button>)}</div><div className="mt-2 space-y-2">{filtered.map(o=><button key={o.id} onClick={()=>setSelected(o)} className={`w-full rounded-2xl border p-4 text-left ${selected?.id===o.id?"border-accent bg-accent/5":"border-transparent hover:bg-secondary/40"}`}><div className="flex justify-between gap-2"><b className="text-sm">{o.client_name}</b><small className="font-mono text-[10px] text-muted-foreground">{o.reference_number}</small></div><p className="mt-2 truncate text-xs text-muted-foreground">{o.services?.name || "Service request"} · {o.lga}</p><span className="mt-3 inline-block rounded-full bg-secondary px-2 py-1 text-[9px] font-bold">{o.status}</span></button>)}{!filtered.length&&<div className="p-8 text-center text-sm text-muted-foreground">No orders in this view.</div>}</div></div>
           {selected ? <div className="space-y-5">
@@ -404,19 +1685,280 @@ function AdminPage() {
 }
 
 function AgentPage() {
-  const [email, setEmail] = useState(() => { try { return localStorage.getItem("kala_agent_email") || ""; } catch { return ""; } });
-  const [entry, setEntry] = useState("");
-  const [orders, setOrders] = useState<any[]>([]);
+  const [email, setEmail] = useState(() => {
+  try {
+    return localStorage.getItem("kala_agent_email") || "";
+  } catch {
+    return "";
+  }
+});
+const [entry, setEntry] = useState("");
+const [orders, setOrders] = useState<any[]>([]);
+const [chatOrder, setChatOrder] = useState<any>(null);
+
+const [chatMessages, setChatMessages] = useState<any[]>([]);
+const [chatLoading, setChatLoading] = useState(false);
+const [chatError, setChatError] = useState("");
+const [chatMessage, setChatMessage] = useState("");
+const [chatSending, setChatSending] = useState(false);
+const handleSendChatMessage = async () => {
+  const content = chatMessage.trim();
+
+  if (!content || !chatOrder?.id || !email || chatSending) {
+    return;
+  }
+
+  setChatSending(true);
+  setChatError("");
+
+  try {
+    await agentOperationsApi.sendMessage(
+      chatOrder.id,
+      email,
+      content
+    );
+
+    setChatMessage("");
+
+    const response = await agentOperationsApi.getMessages(
+      chatOrder.id,
+      email
+    );
+
+    setChatMessages(response.messages || []);
+  } catch (error: any) {
+    console.error("Failed to send chat message:", error);
+
+    setChatError(
+      error?.message || "Unable to send message."
+    );
+  } finally {
+    setChatSending(false);
+  }
+};
   const [live, setLive] = useState(false);
   const [locationState, setLocationState] = useState("Location is off");
-  useEffect(()=>{ if(email) agentOperationsApi.getOrders(email).then(r=>setOrders(r.orders||[])).catch(()=>setOrders([])); },[email]);
+  useEffect(() => {
+  if (!chatOrder?.id || !email) {
+    setChatMessages([]);
+    return;
+  }
+
+  let cancelled = false;
+
+  const loadMessages = async () => {
+    setChatLoading(true);
+    setChatError("");
+
+    try {
+      const response = await agentOperationsApi.getMessages(
+        chatOrder.id,
+        email
+      );
+
+      if (!cancelled) {
+        setChatMessages(response.messages || []);
+      }
+    } catch (error: any) {
+      console.error("Failed to load chat messages:", error);
+
+      if (!cancelled) {
+        setChatError(
+          error?.message || "Unable to load conversation messages."
+        );
+      }
+    } finally {
+      if (!cancelled) {
+        setChatLoading(false);
+      }
+    }
+  };
+
+  loadMessages();
+
+  return () => {
+    cancelled = true;
+  };
+}, [chatOrder?.id, email]);
+
+  useEffect(() => {
+  if (!email) return;
+
+  console.log("Loading agent orders for:", email);
+
+  agentOperationsApi.getOrders(email)
+    .then((r) => {
+      console.log("Agent orders API response:", r);
+      setOrders(r.orders || []);
+    })
+    .catch((error) => {
+      console.error("Failed to load agent orders:", error);
+    });
+}, [email]);
   const enter=(e:FormEvent)=>{e.preventDefault();try{localStorage.setItem("kala_agent_email",entry);}catch{}setEmail(entry);};
   const share=()=>{if(!navigator.geolocation){setLocationState("GPS unavailable");return;}setLocationState("Requesting permission…");navigator.geolocation.getCurrentPosition(async(pos)=>{try{await locationApi.update(email,pos.coords.latitude,pos.coords.longitude,"Current area");setLive(true);setLocationState("Updated just now");}catch{setLocationState("Could not send location");}},()=>setLocationState("Permission denied — tracking is off"));};
   if(!email)return <div className="grid min-h-screen place-items-center bg-primary p-5"><form onSubmit={enter} className="w-full max-w-md rounded-[30px] bg-white p-8"><Logo light={false}/><h1 className="mt-10 font-display text-4xl text-primary">Agent portal</h1><p className="mt-3 text-sm leading-6 text-muted-foreground">Access assigned work, conversations, location sharing and weekly earnings.</p><label className="mt-7 block text-sm font-semibold">Registered email<input required type="email" value={entry} onChange={e=>setEntry(e.target.value)} className={fieldStyle} /></label><button className="mt-4 w-full rounded-2xl bg-accent py-4 font-bold text-primary">Continue</button></form></div>;
   const completed=orders.filter(o=>["COMPLETED","CONFIRMED"].includes(o.status));
   const weekly=completed.reduce((s,o)=>s+Number(o.agent_payment||0),0);
-  return <div className="min-h-screen bg-background"><header className="flex h-16 items-center justify-between bg-primary px-5 text-white"><Logo/><div className="flex items-center gap-3 text-sm"><span className="hidden text-white/50 sm:inline">{email}</span><span className="grid h-9 w-9 place-items-center rounded-full bg-accent text-primary"><UserRound className="h-4 w-4"/></span></div></header><main className="mx-auto max-w-[1280px] px-5 py-8"><div className="flex flex-wrap items-end justify-between gap-4"><div><p className="text-xs font-bold uppercase tracking-[.2em] text-accent">Agent workspace</p><h1 className="font-display text-4xl text-primary">Your week at KALA.</h1></div><button onClick={share} className={`flex items-center gap-2 rounded-full px-5 py-3 text-sm font-bold ${live?"bg-green-100 text-green-700":"bg-primary text-white"}`}><MapPin className="h-4 w-4"/>{live?"Live location on":"Share My Location"}</button></div><p className="mt-2 text-xs text-muted-foreground">{locationState}. Browser tracking may pause when this page is closed or suspended.</p><div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">{[["Total Orders",orders.length,Package],["Total Income",`₦${weekly.toLocaleString()}`,CircleDollarSign],["Weekly Orders",completed.length,CalendarDays],["Weekly Income",`₦${weekly.toLocaleString()}`,Star]].map(([label,value,Icon]:any)=><div key={label} className="rounded-[24px] border border-border bg-white p-6"><Icon className="h-5 w-5 text-accent"/><p className="mt-6 text-xs font-bold uppercase tracking-[.12em] text-muted-foreground">{label}</p><p className="mt-2 font-display text-3xl text-primary">{value}</p></div>)}</div><div className="mt-6 grid gap-6 lg:grid-cols-[1fr_320px]"><section className="rounded-[28px] border border-border bg-white p-6"><div className="flex items-center justify-between"><h2 className="font-display text-2xl text-primary">Assigned orders</h2><span className="rounded-full bg-secondary px-3 py-1 text-xs">{orders.length} total</span></div><div className="mt-5 space-y-3">{orders.map(o=><div key={o.id} className="grid gap-4 rounded-2xl border border-border p-4 sm:grid-cols-[1fr_auto] sm:items-center"><div><div className="flex gap-2"><b className="font-mono text-xs text-accent">{o.reference_number}</b><span className="text-xs text-muted-foreground">{statusLabel[o.status]||o.status}</span></div><h3 className="mt-2 font-semibold">{o.services?.name||"Service order"}</h3><p className="mt-1 text-xs text-muted-foreground">{o.client_name} · {o.lga}, {o.state} · ₦{Number(o.agent_payment||0).toLocaleString()}</p></div><div className="flex gap-2"><button className="rounded-xl border border-border px-3 py-2 text-xs font-bold"><MessageCircle className="h-4 w-4"/></button><button onClick={()=>agentOperationsApi.updateStatus(o.id,email,o.status==="ASSIGNED"?"ACCEPTED":"IN_PROGRESS").then(()=>agentOperationsApi.getOrders(email).then(r=>setOrders(r.orders||[])))} className="rounded-xl bg-primary px-4 py-2 text-xs font-bold text-white">Update status</button></div></div>)}{!orders.length&&<div className="py-14 text-center"><Package className="mx-auto h-10 w-10 text-border"/><p className="mt-4 text-sm text-muted-foreground">No assigned orders yet.</p></div>}</div></section><aside className="rounded-[28px] bg-primary p-6 text-white"><p className="text-xs font-bold uppercase tracking-[.2em] text-accent">Current week</p><p className="mt-6 font-display text-5xl">{completed.length}</p><p className="text-sm text-white/45">Orders completed</p><div className="my-6 h-px bg-white/10"/><p className="text-sm text-white/45">Income</p><p className="mt-1 font-display text-3xl text-accent">₦{weekly.toLocaleString()}</p><div className="mt-8 rounded-2xl bg-white/5 p-4 text-sm"><div className="flex justify-between"><span className="text-white/45">Payment status</span><b>Pending</b></div><div className="mt-3 flex justify-between"><span className="text-white/45">Next payment</span><b>Friday</b></div></div></aside></div></main></div>;
+  return <div className="min-h-screen bg-background"><header className="flex h-16 items-center justify-between bg-primary px-5 text-white"><Logo/><div className="flex items-center gap-3 text-sm"><span className="hidden text-white/50 sm:inline">{email}</span><span className="grid h-9 w-9 place-items-center rounded-full bg-accent text-primary"><UserRound className="h-4 w-4"/></span></div></header><main className="mx-auto max-w-[1280px] px-5 py-8"><div className="flex flex-wrap items-end justify-between gap-4"><div><p className="text-xs font-bold uppercase tracking-[.2em] text-accent">Agent workspace</p><h1 className="font-display text-4xl text-primary">Your week at KALA.</h1></div><button onClick={share} className={`flex items-center gap-2 rounded-full px-5 py-3 text-sm font-bold ${live?"bg-green-100 text-green-700":"bg-primary text-white"}`}><MapPin className="h-4 w-4"/>{live?"Live location on":"Share My Location"}</button></div><p className="mt-2 text-xs text-muted-foreground">{locationState}. Browser tracking may pause when this page is closed or suspended.</p><div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">{[["Total Orders",orders.length,Package],["Total Income",`₦${weekly.toLocaleString()}`,CircleDollarSign],["Weekly Orders",completed.length,CalendarDays],["Weekly Income",`₦${weekly.toLocaleString()}`,Star]].map(([label,value,Icon]:any)=><div key={label} className="rounded-[24px] border border-border bg-white p-6"><Icon className="h-5 w-5 text-accent"/><p className="mt-6 text-xs font-bold uppercase tracking-[.12em] text-muted-foreground">{label}</p><p className="mt-2 font-display text-3xl text-primary">{value}</p></div>)}</div><div className="mt-6 grid gap-6 lg:grid-cols-[1fr_320px]"><section className="rounded-[28px] border border-border bg-white p-6"><div className="flex items-center justify-between"><h2 className="font-display text-2xl text-primary">Assigned orders</h2><span className="rounded-full bg-secondary px-3 py-1 text-xs">{orders.length} total</span></div><div className="mt-5 space-y-3">{orders.map(o=><div key={o.id} className="grid gap-4 rounded-2xl border border-border p-4 sm:grid-cols-[1fr_auto] sm:items-center"><div><div className="flex gap-2"><b className="font-mono text-xs text-accent">{o.reference_number}</b><span className="text-xs text-muted-foreground">{statusLabel[o.status]||o.status}</span></div><h3 className="mt-2 font-semibold">{o.services?.name||"Service order"}</h3><p className="mt-1 text-xs text-muted-foreground">{o.client_name} · {o.lga}, {o.state} · ₦{Number(o.agent_payment||0).toLocaleString()}</p></div><div className="flex gap-2"><button
+  onClick={() => setChatOrder(o)}
+  className="rounded-xl border border-border px-3 py-2 text-xs font-bold"
+  title="Open chat"
+>
+  <MessageCircle className="h-4 w-4"/>
+</button>{o.status !== "COMPLETED" && o.status !== "CANCELLED" && (
+  <button
+    onClick={async () => {
+      const nextStatus =
+        o.status === "ASSIGNED"
+          ? "ACCEPTED"
+          : o.status === "ACCEPTED"
+            ? "IN_PROGRESS"
+            : o.status === "IN_PROGRESS"
+              ? "COMPLETED"
+              : o.status === "AWAITING_CLIENT"
+                ? "COMPLETED"
+                : null;
+
+      if (!nextStatus) return;
+
+      try {
+        await agentOperationsApi.updateStatus(o.id, email, nextStatus);
+
+        const r = await agentOperationsApi.getOrders(email);
+        setOrders(r.orders || []);
+      } catch (error: any) {
+        alert(error?.message || "Unable to update order status");
+      }
+    }}
+    className="rounded-xl bg-primary px-4 py-2 text-xs font-bold text-white"
+  >
+    {o.status === "ASSIGNED"
+      ? "Accept Order"
+      : o.status === "ACCEPTED"
+        ? "Start Order"
+        : o.status === "IN_PROGRESS"
+          ? "Complete Order"
+          : o.status === "AWAITING_CLIENT"
+            ? "Complete Order"
+            : "Update status"}
+  </button>
+)}</div></div>)}{!orders.length&&<div className="py-14 text-center"><Package className="mx-auto h-10 w-10 text-border"/><p className="mt-4 text-sm text-muted-foreground">No assigned orders yet.</p></div>}</div></section><aside className="rounded-[28px] bg-primary p-6 text-white"><p className="text-xs font-bold uppercase tracking-[.2em] text-accent">Current week</p><p className="mt-6 font-display text-5xl">{completed.length}</p><p className="text-sm text-white/45">Orders completed</p><div className="my-6 h-px bg-white/10"/><p className="text-sm text-white/45">Income</p><p className="mt-1 font-display text-3xl text-accent">₦{weekly.toLocaleString()}</p><div className="mt-8 rounded-2xl bg-white/5 p-4 text-sm"><div className="flex justify-between"><span className="text-white/45">Payment status</span><b>Pending</b></div><div className="mt-3 flex justify-between"><span className="text-white/45">Next payment</span><b>Friday</b></div></div></aside></div>{chatOrder && (
+  <div className="fixed inset-0 z-50 flex items-end justify-end bg-black/30 p-4 sm:items-end">
+    <div className="flex h-[520px] w-full max-w-md flex-col overflow-hidden rounded-[28px] bg-white shadow-2xl">
+      <div className="flex items-center justify-between bg-primary px-5 py-4 text-white">
+        <div>
+          <p className="text-xs font-bold uppercase tracking-[.15em] text-accent">
+            Order Chat
+          </p>
+          <p className="mt-1 font-semibold">
+            {chatOrder.reference_number}
+          </p>
+        </div>
+
+        <button
+          onClick={() => setChatOrder(null)}
+          className="rounded-full px-3 py-2 text-white/70 hover:bg-white/10 hover:text-white"
+          title="Close chat"
+        >
+          ✕
+        </button>
+      </div>
+
+      
+<div className="flex flex-1 flex-col gap-3 overflow-y-auto bg-gray-50 p-4">
+  {chatLoading && (
+    <p className="py-4 text-center text-sm text-gray-500">
+      Loading messages...
+    </p>
+  )}
+
+  {chatError && (
+    <p className="rounded-xl bg-red-50 p-3 text-sm text-red-600">
+      {chatError}
+    </p>
+  )}
+
+  {!chatLoading && !chatError && chatMessages.length === 0 && (
+    <div className="flex flex-1 flex-col items-center justify-center text-center">
+      <MessageCircle className="h-10 w-10 text-accent" />
+      <p className="mt-4 font-semibold text-primary">
+        No messages yet
+      </p>
+      <p className="mt-2 text-sm text-gray-500">
+        Messages about this order will appear here.
+      </p>
+    </div>
+  )}
+
+  {chatMessages.map((message) => {
+    const isAgent = message.sender_type === "agent";
+
+    return (
+      <div
+        key={message.id}
+        className={`flex ${isAgent ? "justify-end" : "justify-start"}`}
+      >
+        <div
+          className={`max-w-[85%] rounded-2xl px-4 py-3 shadow-sm ${
+            isAgent
+              ? "rounded-br-sm bg-primary text-white"
+              : "rounded-bl-sm border border-gray-200 bg-white text-gray-800"
+          }`}
+        >
+          <p className="mb-1 text-[10px] font-bold uppercase opacity-70">
+            {isAgent ? "You" : message.sender_type}
+          </p>
+
+          <p className="whitespace-pre-wrap break-words text-sm">
+            {message.content}
+          </p>
+
+          <p className="mt-2 text-right text-[10px] opacity-60">
+            {message.created_at
+              ? new Date(message.created_at).toLocaleString()
+              : ""}
+          </p>
+        </div>
+      </div>
+    );
+  })}
+</div>
+
+
+      <div className="border-t border-border bg-white p-4">
+  <div className="flex gap-2">
+    <input
+      value={chatMessage}
+      onChange={(e) => setChatMessage(e.target.value)}
+      onKeyDown={(e) => {
+        if (e.key === "Enter" && !e.shiftKey) {
+          e.preventDefault();
+          handleSendChatMessage();
+        }
+      }}
+      placeholder="Type a message..."
+      disabled={chatSending}
+      className="flex-1 rounded-xl border border-border px-4 py-3 text-sm outline-none focus:border-primary"
+    />
+
+    <button
+      onClick={handleSendChatMessage}
+      disabled={chatSending || !chatMessage.trim()}
+      className="rounded-xl bg-primary px-4 py-3 text-sm font-bold text-white disabled:cursor-not-allowed disabled:opacity-50"
+    >
+      {chatSending ? "..." : "Send"}
+    </button>
+  </div>
+</div>
+    </div>
+  </div>
+)}
+
+</main></div>;
 }
+
+
 
 function SimplePage({ type }: { type: "services" | "agent" }) {
   const services = useServices();

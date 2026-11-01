@@ -1,8 +1,27 @@
 {
   "name": "@figma/my-make-file",
-  "private": true,
   "version": "0.0.1",
+  "private": true,
+  "description": "Kala.com.ng",
+  "keywords": [
+    "Logistics",
+    "Web",
+    "Application",
+    "Book",
+    "Order"
+  ],
+  "homepage": "https://github.com/JamesKingWebDev/kala.com.ng#readme",
+  "bugs": {
+    "url": "https://github.com/JamesKingWebDev/kala.com.ng/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/JamesKingWebDev/kala.com.ng.git"
+  },
+  "license": "ISC",
+  "author": "James King",
   "type": "module",
+  "main": "index.js",
   "scripts": {
     "build": "vite build",
     "dev": "vite"
@@ -56,7 +75,7 @@
     "react-dnd": "16.0.1",
     "react-dnd-html5-backend": "16.0.1",
     "react-hook-form": "7.55.0",
-    "react-leaflet": "^5.0.0",
+    "react-leaflet": "^4.2.1",
     "react-popper": "2.3.0",
     "react-resizable-panels": "2.1.7",
     "react-responsive-masonry": "2.7.1",

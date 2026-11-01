@@ -4,7 +4,7 @@ import { logger } from "npm:hono/logger";
 import { createClient } from "jsr:@supabase/supabase-js@2.49.8";
 import * as kv from "./kv_store.tsx";
 
-const app = new Hono();
+const app = new Hono().basePath("/server");
 
 // Helper to create Supabase client
 const getSupabaseClient = (serviceRole = false) => {
@@ -20,21 +20,38 @@ const getSupabaseClient = (serviceRole = false) => {
 app.use('*', logger(console.log));
 
 // Enable CORS for all routes and methods
+
 app.use(
   "/*",
   cors({
     origin: "*",
-    allowHeaders: ["Content-Type", "Authorization"],
+    allowHeaders: [
+      "Content-Type",
+      "Authorization",
+      "X-Admin-Pin",
+    ],
     allowMethods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     exposeHeaders: ["Content-Length"],
     maxAge: 600,
   }),
 );
 
+
+app.get("/", (c) => {
+  return c.json({
+    status: "ok",
+    function: "server",
+    message: "KALA server is running",
+  });
+});
+
 // Health check endpoint
 app.get("/make-server-73b64ebc/health", (c) => {
   return c.json({ status: "ok" });
 });
+
+const KALA_OPERATIONS_ADMIN_ID =
+  "00000000-0000-0000-0000-000000000001";
 
 const requireAdmin = (c: any) => {
   const supplied = c.req.header("X-Admin-Pin");
@@ -808,29 +825,93 @@ app.post("/make-server-73b64ebc/orders", async (c) => {
   }
 });
 
+
 // Contact is checked server-side before returning client-facing order data.
 app.get("/make-server-73b64ebc/orders/track", async (c) => {
   try {
-    const reference = String(c.req.query("reference") || "").trim().toUpperCase();
-    const contact = String(c.req.query("contact") || "").trim().toLowerCase();
-    if (!reference || !contact) return c.json({ error: "Reference and contact are required" }, 400);
+    const reference = String(c.req.query("reference") || "")
+      .trim()
+      .toUpperCase();
+
+    const contact = String(c.req.query("contact") || "")
+      .trim()
+      .toLowerCase();
+
+    if (!reference || !contact) {
+      return c.json(
+        { error: "Reference and contact are required" },
+        400
+      );
+    }
+
     const supabase = getSupabaseClient(true);
+
     const { data: order, error } = await supabase
       .from("orders")
-      .select("id, reference_number, status, service_description, pickup_address, destination_address, lga, state, preferred_date, preferred_time, client_phone, client_email, assigned_agent_id, created_at, services(name), agents:assigned_agent_id(business_name)")
+      .select(`
+        id,
+        reference_number,
+        status,
+        service_description,
+        pickup_address,
+        destination_address,
+        lga,
+        state,
+        preferred_date,
+        preferred_time,
+        client_phone,
+        client_email,
+        assigned_agent_id,
+        created_at,
+        services(name)
+      `)
       .eq("reference_number", reference)
       .maybeSingle();
-    if (error) return c.json({ error: error.message }, 500);
-    if (!order) return c.json({ error: "Order not found" }, 404);
-    if (String(order.client_email).toLowerCase() !== contact && String(order.client_phone).toLowerCase() !== contact) {
-      return c.json({ error: "The contact does not match this order" }, 403);
+
+    if (error) {
+      console.error("Order tracking error:", error);
+      return c.json({ error: error.message }, 500);
     }
-    const { client_email, client_phone, ...safeOrder } = order;
-    return c.json({ order: { ...safeOrder, assigned_agent: order.agents || null, agents: undefined } });
+
+    if (!order) {
+      return c.json({ error: "Order not found" }, 404);
+    }
+
+    if (
+      String(order.client_email).toLowerCase() !== contact &&
+      String(order.client_phone).toLowerCase() !== contact
+    ) {
+      return c.json(
+        { error: "The contact does not match this order" },
+        403
+      );
+    }
+
+    const {
+      client_email,
+      client_phone,
+      assigned_agent_id,
+      ...safeOrder
+    } = order;
+
+    return c.json({
+      order: {
+        ...safeOrder,
+        assigned_agent_id,
+        assigned_agent: null
+      }
+    });
+
   } catch (error) {
-    return c.json({ error: error.message }, 500);
+    console.error("Order tracking exception:", error);
+
+    return c.json(
+      { error: error.message || "Unable to track this order" },
+      500
+    );
   }
 });
+
 
 app.get("/make-server-73b64ebc/admin/orders", async (c) => {
   if (!requireAdmin(c)) return c.json({ error: "Admin access required" }, 401);
@@ -838,7 +919,7 @@ app.get("/make-server-73b64ebc/admin/orders", async (c) => {
     const supabase = getSupabaseClient(true);
     const { data, error } = await supabase
       .from("orders")
-      .select("*, services(name, slug), agents:assigned_agent_id(id, business_name)")
+      .select("*, services(name, slug)")
       .order("created_at", { ascending: false })
       .limit(100);
     if (error) return c.json({ error: error.message }, 500);
@@ -848,89 +929,507 @@ app.get("/make-server-73b64ebc/admin/orders", async (c) => {
   }
 });
 
+
 app.get("/make-server-73b64ebc/admin/orders/:id/suggested-agents", async (c) => {
-  if (!requireAdmin(c)) return c.json({ error: "Admin access required" }, 401);
+  if (!requireAdmin(c)) {
+    return c.json({ error: "Admin access required" }, 401);
+  }
+
   try {
     const supabase = getSupabaseClient(true);
     const orderId = c.req.param("id");
-    const { data: order } = await supabase
+    const now = new Date().toISOString();
+
+    // 1. Retrieve the order
+    const { data: order, error: orderError } = await supabase
       .from("orders")
       .select("service_id, lga, state, latitude, longitude")
       .eq("id", orderId)
       .single();
-    if (!order) return c.json({ error: "Order not found" }, 404);
 
-    const { data: capabilityRows } = await supabase
-      .from("agent_services")
-      .select("agent_id")
-      .eq("service_id", order.service_id);
-    const ids = (capabilityRows || []).map((row) => row.agent_id);
-    if (!ids.length) return c.json({ agents: [] });
+    if (orderError || !order) {
+      return c.json({ error: "Order not found" }, 404);
+    }
 
-    const { data: agents, error } = await supabase
+    // 2. Find verified, qualified and available agents
+    const { data: agents, error: agentsError } = await supabase
       .from("agents")
-      .select("id, business_name, owner_name, current_lat, current_lng, current_lga, location_state, availability_status, is_verified, rating, active_order_count, blacklist_status")
-      .in("id", ids)
+      .select(`
+        id,
+        business_name,
+        owner_name,
+        current_lat,
+        current_lng,
+        current_lga,
+        location_state,
+        availability_status,
+        booking_status,
+        is_verified
+      `)
+      .contains("services", JSON.stringify([order.service_id]))
       .eq("is_verified", true)
-      .eq("blacklist_status", false)
-      .neq("availability_status", "offline");
-    if (error) return c.json({ error: error.message }, 500);
+      .eq("availability_status", "available")
+      .eq("booking_status", "free");
 
+    if (agentsError) {
+      return c.json({ error: agentsError.message }, 500);
+    }
+
+    if (!agents || agents.length === 0) {
+      return c.json({ agents: [] });
+    }
+
+    // 3. Check active subscriptions
+    const agentIds = agents.map((agent) => agent.id);
+
+    const { data: activePayments, error: paymentError } = await supabase
+      .from("payments")
+      .select("agent_id, expires_at")
+      .in("agent_id", agentIds)
+      .eq("status", "completed")
+      .gt("expires_at", now);
+
+    if (paymentError) {
+      return c.json({ error: paymentError.message }, 500);
+    }
+
+    const activeAgentIds = new Set(
+      (activePayments || []).map((payment) => payment.agent_id)
+    );
+
+    // 4. Keep only agents with active subscriptions
+    const eligibleAgents = agents.filter((agent) =>
+      activeAgentIds.has(agent.id)
+    );
+
+    // 5. Calculate distance using the Haversine formula
     const distance = (agent: any) => {
-      if (order.latitude == null || order.longitude == null || agent.current_lat == null || agent.current_lng == null) return null;
+      if (
+        order.latitude == null ||
+        order.longitude == null ||
+        agent.current_lat == null ||
+        agent.current_lng == null
+      ) {
+        return null;
+      }
+
       const rad = Math.PI / 180;
       const dLat = (agent.current_lat - order.latitude) * rad;
       const dLng = (agent.current_lng - order.longitude) * rad;
-      const a = Math.sin(dLat / 2) ** 2 + Math.cos(order.latitude * rad) * Math.cos(agent.current_lat * rad) * Math.sin(dLng / 2) ** 2;
-      return Math.round(6371 * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a)) * 10) / 10;
+
+      const a =
+        Math.sin(dLat / 2) ** 2 +
+        Math.cos(order.latitude * rad) *
+          Math.cos(agent.current_lat * rad) *
+          Math.sin(dLng / 2) ** 2;
+
+      return Math.round(
+        6371 *
+          2 *
+          Math.atan2(Math.sqrt(a), Math.sqrt(1 - a)) *
+          10
+      ) / 10;
     };
-    const ranked = (agents || []).map((agent) => ({ ...agent, distance_km: distance(agent) }))
+
+    // 6. Rank eligible agents by location and distance
+    const ranked = eligibleAgents
+      .map((agent) => ({
+        ...agent,
+        rating: null,
+        distance_km: distance(agent),
+        subscription_active: true,
+      }))
       .sort((a, b) => {
-        const sameA = a.current_lga === order.lga ? 0 : 1;
-        const sameB = b.current_lga === order.lga ? 0 : 1;
-        return sameA - sameB || (a.distance_km ?? 9999) - (b.distance_km ?? 9999) || (b.rating ?? 0) - (a.rating ?? 0);
+        const sameLgaA =
+          (a.current_lga || "").toLowerCase() ===
+          (order.lga || "").toLowerCase()
+            ? 0
+            : 1;
+
+        const sameLgaB =
+          (b.current_lga || "").toLowerCase() ===
+          (order.lga || "").toLowerCase()
+            ? 0
+            : 1;
+
+        const sameStateA =
+          (a.location_state || "").toLowerCase() ===
+          (order.state || "").toLowerCase()
+            ? 0
+            : 1;
+
+        const sameStateB =
+          (b.location_state || "").toLowerCase() ===
+          (order.state || "").toLowerCase()
+            ? 0
+            : 1;
+
+        return (
+          sameLgaA - sameLgaB ||
+          sameStateA - sameStateB ||
+          (a.distance_km ?? 9999) - (b.distance_km ?? 9999)
+        );
       });
+
     return c.json({ agents: ranked });
-  } catch (error) {
-    return c.json({ error: error.message }, 500);
+
+  } catch (error: any) {
+    console.error("Suggested agents error:", error);
+    return c.json(
+      { error: error.message || "Failed to retrieve suggested agents" },
+      500
+    );
   }
 });
 
+
+
 app.post("/make-server-73b64ebc/admin/orders/:id/assign", async (c) => {
-  if (!requireAdmin(c)) return c.json({ error: "Admin access required" }, 401);
+  if (!requireAdmin(c)) {
+    return c.json({ error: "Admin access required" }, 401);
+  }
+
   try {
     const orderId = c.req.param("id");
     const { agent_id, agent_payment } = await c.req.json();
-    if (!agent_id || !Number.isFinite(Number(agent_payment))) return c.json({ error: "Agent and payment are required" }, 400);
+
+    const paymentAmount = Number(agent_payment);
+
+    if (
+      !agent_id ||
+      agent_payment === undefined ||
+      agent_payment === null ||
+      !Number.isFinite(paymentAmount) ||
+      paymentAmount < 0
+    ) {
+      return c.json({ error: "A valid agent and payment are required" }, 400);
+    }
+
     const supabase = getSupabaseClient(true);
     const now = new Date().toISOString();
-    const { data: current } = await supabase.from("orders").select("status, client_id").eq("id", orderId).single();
-    if (!current) return c.json({ error: "Order not found" }, 404);
 
-    const { data: order, error } = await supabase
+    // 1. Retrieve the order
+    const { data: current, error: orderLookupError } = await supabase
       .from("orders")
-      .update({ assigned_agent_id: agent_id, agent_payment: Number(agent_payment), status: "ASSIGNED", assigned_at: now })
+      .select("id, service_id, status, client_id, assigned_agent_id")
+      .eq("id", orderId)
+      .single();
+
+    if (orderLookupError || !current) {
+      return c.json({ error: "Order not found" }, 404);
+    }
+
+    if (["COMPLETED", "CONFIRMED", "CANCELLED"].includes(current.status)) {
+      return c.json(
+        { error: "This order cannot be assigned in its current status" },
+        400
+      );
+    }
+
+    // 2. Retrieve the selected agent
+    const { data: agent, error: agentError } = await supabase
+      .from("agents")
+      .select(`
+        id,
+        business_name,
+        services,
+        is_verified,
+        availability_status,
+        booking_status
+      `)
+      .eq("id", agent_id)
+      .single();
+
+    if (agentError || !agent) {
+      return c.json({ error: "Selected agent was not found" }, 404);
+    }
+
+    if (!agent.is_verified) {
+      return c.json({ error: "This agent is not verified" }, 400);
+    }
+
+    // 3. Confirm the agent provides the requested service
+    const agentServices = Array.isArray(agent.services)
+      ? agent.services
+      : [];
+
+    if (!agentServices.includes(current.service_id)) {
+      return c.json(
+        { error: "This agent does not provide the requested service" },
+        400
+      );
+    }
+
+    // 4. Confirm agent availability
+    if (
+      agent.availability_status !== "available" ||
+      agent.booking_status !== "free"
+    ) {
+      return c.json(
+        { error: "This agent is currently unavailable or already booked" },
+        400
+      );
+    }
+
+    // 5. Confirm active subscription
+    const { data: activePayment, error: paymentError } = await supabase
+      .from("payments")
+      .select("id")
+      .eq("agent_id", agent_id)
+      .eq("status", "completed")
+      .gt("expires_at", now)
+      .limit(1)
+      .maybeSingle();
+
+    if (paymentError) {
+      return c.json({ error: paymentError.message }, 500);
+    }
+
+    if (!activePayment) {
+      return c.json(
+        { error: "This agent does not have an active subscription" },
+        400
+      );
+    }
+
+    // 6. Check that the agent has no other active order
+    const { data: existingOrders, error: existingOrdersError } =
+      await supabase
+        .from("orders")
+        .select("id")
+        .eq("assigned_agent_id", agent_id)
+        .in("status", [
+          "ASSIGNED",
+          "ACCEPTED",
+          "IN_PROGRESS",
+          "AWAITING_CLIENT",
+        ])
+        .neq("id", orderId)
+        .limit(1);
+
+    if (existingOrdersError) {
+      return c.json({ error: existingOrdersError.message }, 500);
+    }
+
+    if (existingOrders && existingOrders.length > 0) {
+      return c.json(
+        { error: "This agent already has an active order" },
+        400
+      );
+    }
+
+    // 7. Assign the agent to the order
+    const { data: order, error: assignmentError } = await supabase
+      .from("orders")
+      .update({
+        assigned_agent_id: agent_id,
+        agent_payment: paymentAmount,
+        status: "ASSIGNED",
+        assigned_at: now,
+        updated_at: now,
+      })
       .eq("id", orderId)
       .select()
       .single();
-    if (error) return c.json({ error: error.message }, 500);
-    await supabase.from("agents").update({ availability_status: "engaged", booking_status: "booked" }).eq("id", agent_id);
-    await supabase.from("order_status_history").insert({
-      order_id: orderId, previous_status: current.status, new_status: "ASSIGNED",
-      changed_by_type: "admin", notes: `Agent assigned with payment ₦${Number(agent_payment).toLocaleString()}`,
-    });
-    const { data: conversation } = await supabase.from("conversations").insert({ order_id: orderId, type: "order" }).select("id").single();
-    if (conversation) {
-      await supabase.from("conversation_participants").insert([
-        { conversation_id: conversation.id, participant_type: "client", participant_id: current.client_id },
-        { conversation_id: conversation.id, participant_type: "agent", participant_id: agent_id },
-      ]);
+
+    if (assignmentError) {
+      return c.json({ error: assignmentError.message }, 500);
     }
-    return c.json({ order });
-  } catch (error) {
-    return c.json({ error: error.message }, 500);
+
+    // 8. Update agent availability
+    const { error: agentUpdateError } = await supabase
+      .from("agents")
+      .update({
+        availability_status: "engaged",
+        booking_status: "booked",
+        updated_at: now,
+      })
+      .eq("id", agent_id);
+
+    if (agentUpdateError) {
+      console.error("Agent status update failed:", agentUpdateError);
+    }
+
+    // 9. Record order status history
+    const { error: historyError } = await supabase
+      .from("order_status_history")
+      .insert({
+        order_id: orderId,
+        previous_status: current.status,
+        new_status: "ASSIGNED",
+        changed_by_type: "admin",
+        notes: `Agent assigned with payment ₦${paymentAmount.toLocaleString()}`,
+      });
+
+    if (historyError) {
+      console.error("Order history update failed:", historyError);
+    }
+
+    // 10. Create conversation if one does not already exist
+    const { data: existingConversation } = await supabase
+      .from("conversations")
+      .select("id")
+      .eq("order_id", orderId)
+      .limit(1)
+      .maybeSingle();
+
+    let conversationId = existingConversation?.id;
+
+    if (!conversationId) {
+      const { data: conversation, error: conversationError } =
+        await supabase
+          .from("conversations")
+          .insert({
+            order_id: orderId,
+            type: "order",
+          })
+          .select("id")
+          .single();
+
+      if (conversationError) {
+        console.error("Conversation creation failed:", conversationError);
+      } else {
+        conversationId = conversation.id;
+      }
+    }
+
+    // 11. Add client and agent as conversation participants
+    if (conversationId) {
+      const participants = [];
+
+      if (current.client_id) {
+  participants.push({
+    conversation_id: conversationId,
+    participant_type: "client",
+    participant_id: current.client_id,
+  });
+}
+
+participants.push({
+  conversation_id: conversationId,
+  participant_type: "agent",
+  participant_id: agent_id,
+});
+
+participants.push({
+  conversation_id: conversationId,
+  participant_type: "admin",
+  participant_id: KALA_OPERATIONS_ADMIN_ID,
+});
+
+      const { error: participantError } = await supabase
+        .from("conversation_participants")
+        .upsert(participants, {
+          onConflict: "conversation_id,participant_type,participant_id",
+          ignoreDuplicates: true,
+        });
+
+      if (participantError) {
+        console.error("Conversation participants failed:", participantError);
+      }
+    }
+
+    return c.json({
+      order,
+      message: "Agent assigned successfully",
+      conversation_id: conversationId || null,
+    });
+
+  } catch (error: any) {
+    console.error("Order assignment error:", error);
+
+    return c.json(
+      { error: error.message || "Failed to assign agent" },
+      500
+    );
   }
 });
+
+// GET: Retrieve messages for an order (Admin)
+app.get("/make-server-73b64ebc/admin/orders/:id/messages", async (c) => {
+  if (!requireAdmin(c)) {
+    return c.json({ error: "Admin access required" }, 401);
+  }
+
+  try {
+    const orderId = c.req.param("id");
+    const supabase = getSupabaseClient(true);
+
+    // Verify that the order exists
+    const { data: order, error: orderError } = await supabase
+      .from("orders")
+      .select("id")
+      .eq("id", orderId)
+      .maybeSingle();
+
+    if (orderError) {
+      return c.json({ error: orderError.message }, 500);
+    }
+
+    if (!order) {
+      return c.json({ error: "Order not found" }, 404);
+    }
+
+    // Find the order conversation
+    const { data: conversation, error: conversationError } =
+      await supabase
+        .from("conversations")
+        .select("id")
+        .eq("order_id", orderId)
+        .maybeSingle();
+
+    if (conversationError) {
+      return c.json({ error: conversationError.message }, 500);
+    }
+
+    if (!conversation) {
+      return c.json({
+        conversation_id: null,
+        messages: [],
+      });
+    }
+
+    // Retrieve all messages in chronological order
+    const { data: messages, error: messagesError } = await supabase
+      .from("messages")
+      .select(`
+        id,
+        sender_type,
+        sender_id,
+        message_type,
+        content,
+        is_read,
+        created_at,
+        message_attachments (
+          id,
+          file_name,
+          file_url,
+          file_type,
+          file_size
+        )
+      `)
+      .eq("conversation_id", conversation.id)
+      .order("created_at", { ascending: true });
+
+    if (messagesError) {
+      return c.json({ error: messagesError.message }, 500);
+    }
+
+    return c.json({
+      conversation_id: conversation.id,
+      messages: messages || [],
+    });
+
+  } catch (error: any) {
+    console.error("Admin chat retrieval error:", error);
+
+    return c.json(
+      { error: error.message || "Failed to retrieve messages" },
+      500
+    );
+  }
+});
+
 
 app.get("/make-server-73b64ebc/agent/orders", async (c) => {
   try {
@@ -951,30 +1450,354 @@ app.get("/make-server-73b64ebc/agent/orders", async (c) => {
   }
 });
 
+
 app.post("/make-server-73b64ebc/agent/orders/:id/status", async (c) => {
   try {
     const orderId = c.req.param("id");
     const { email, status } = await c.req.json();
-    const allowed = ["ACCEPTED", "IN_PROGRESS", "AWAITING_CLIENT", "COMPLETED", "CANCELLED"];
-    if (!email || !allowed.includes(status)) return c.json({ error: "Invalid status request" }, 400);
+
+    const allowed = [
+      "ACCEPTED",
+      "IN_PROGRESS",
+      "AWAITING_CLIENT",
+      "COMPLETED",
+      "CANCELLED",
+    ];
+
+    if (!email || !allowed.includes(status)) {
+      return c.json({ error: "Invalid status request" }, 400);
+    }
+
     const supabase = getSupabaseClient(true);
-    const { data: agent } = await supabase.from("agents").select("id").eq("email", String(email).toLowerCase()).maybeSingle();
-    if (!agent) return c.json({ error: "Agent not found" }, 404);
-    const { data: current } = await supabase.from("orders").select("status").eq("id", orderId).eq("assigned_agent_id", agent.id).maybeSingle();
-    if (!current) return c.json({ error: "This order is not assigned to the agent" }, 403);
-    const timestamp: Record<string, string> = {};
-    if (status === "IN_PROGRESS") timestamp.started_at = new Date().toISOString();
-    if (status === "COMPLETED") timestamp.completed_at = new Date().toISOString();
-    const { data: order, error } = await supabase.from("orders").update({ status, ...timestamp }).eq("id", orderId).select().single();
-    if (error) return c.json({ error: error.message }, 500);
-    await supabase.from("order_status_history").insert({
-      order_id: orderId, previous_status: current.status, new_status: status,
-      changed_by_type: "agent", changed_by_id: agent.id,
-    });
+
+    // 1. Identify agent
+    const { data: agent, error: agentError } = await supabase
+      .from("agents")
+      .select("id")
+      .eq("email", String(email).trim().toLowerCase())
+      .maybeSingle();
+
+    if (agentError || !agent) {
+      return c.json({ error: "Agent not found" }, 404);
+    }
+
+    // 2. Verify assigned order
+    const { data: current, error: orderError } = await supabase
+      .from("orders")
+      .select("id, status, assigned_agent_id")
+      .eq("id", orderId)
+      .eq("assigned_agent_id", agent.id)
+      .maybeSingle();
+
+    if (orderError || !current) {
+      return c.json(
+        { error: "This order is not assigned to the agent" },
+        403
+      );
+    }
+
+    // 3. Validate status transitions
+    const transitions: Record<string, string[]> = {
+      ASSIGNED: ["ACCEPTED", "CANCELLED"],
+      ACCEPTED: ["IN_PROGRESS", "CANCELLED"],
+      IN_PROGRESS: ["AWAITING_CLIENT", "COMPLETED", "CANCELLED"],
+      AWAITING_CLIENT: ["IN_PROGRESS", "COMPLETED", "CANCELLED"],
+    };
+
+    if (!(transitions[current.status] || []).includes(status)) {
+      return c.json(
+        {
+          error: `Cannot change order from ${current.status} to ${status}`,
+        },
+        400
+      );
+    }
+
+    const now = new Date().toISOString();
+
+    // 4. Prepare order update
+    const updateData: Record<string, any> = {
+      status,
+      updated_at: now,
+    };
+
+    if (status === "IN_PROGRESS") {
+      updateData.started_at = now;
+    }
+
+    if (status === "COMPLETED") {
+      updateData.completed_at = now;
+    }
+
+    // 5. Update order
+    const { data: order, error: updateError } = await supabase
+      .from("orders")
+      .update(updateData)
+      .eq("id", orderId)
+      .select()
+      .single();
+
+    if (updateError) {
+      return c.json({ error: updateError.message }, 500);
+    }
+
+    // 6. Record status history
+    const { error: historyError } = await supabase
+      .from("order_status_history")
+      .insert({
+        order_id: orderId,
+        previous_status: current.status,
+        new_status: status,
+        changed_by_type: "agent",
+        changed_by_id: agent.id,
+      });
+
+    if (historyError) {
+      console.error("Order history error:", historyError);
+    }
+
+    // 7. Release agent when order ends
+    if (["COMPLETED", "CANCELLED"].includes(status)) {
+      const { error: agentUpdateError } = await supabase
+        .from("agents")
+        .update({
+          availability_status: "available",
+          booking_status: "free",
+          updated_at: now,
+        })
+        .eq("id", agent.id);
+
+      if (agentUpdateError) {
+        console.error("Agent availability update failed:", agentUpdateError);
+      }
+    }
+
     return c.json({ order });
-  } catch (error) {
-    return c.json({ error: error.message }, 500);
+
+  } catch (error: any) {
+    console.error("Agent order status error:", error);
+
+    return c.json(
+      { error: error.message || "Failed to update order status" },
+      500
+    );
   }
+});
+
+// GET: Retrieve messages for an assigned order
+app.get("/make-server-73b64ebc/agent/orders/:id/messages", async (c) => {
+  try {
+    const orderId = c.req.param("id");
+    const email = String(c.req.query("email") || "")
+      .trim()
+      .toLowerCase();
+
+    if (!email) {
+      return c.json({ error: "Agent email is required" }, 400);
+    }
+
+    const supabase = getSupabaseClient(true);
+
+    // Verify the agent
+    const { data: agent, error: agentError } = await supabase
+      .from("agents")
+      .select("id")
+      .eq("email", email)
+      .maybeSingle();
+
+    if (agentError || !agent) {
+      return c.json({ error: "Agent not found" }, 404);
+    }
+
+    // Verify that this order belongs to the agent
+    const { data: order, error: orderError } = await supabase
+      .from("orders")
+      .select("id, assigned_agent_id")
+      .eq("id", orderId)
+      .eq("assigned_agent_id", agent.id)
+      .maybeSingle();
+
+    if (orderError || !order) {
+      return c.json({ error: "Order is not assigned to this agent" }, 403);
+    }
+
+    // Find the order conversation
+    const { data: conversation, error: conversationError } =
+      await supabase
+        .from("conversations")
+        .select("id")
+        .eq("order_id", orderId)
+        .maybeSingle();
+
+    if (conversationError) {
+      return c.json({ error: conversationError.message }, 500);
+    }
+
+    if (!conversation) {
+      return c.json({ conversation: null, messages: [] });
+    }
+
+    // Retrieve messages
+    const { data: messages, error: messagesError } = await supabase
+      .from("messages")
+      .select(`
+        id,
+        sender_type,
+        sender_id,
+        message_type,
+        content,
+        is_read,
+        created_at,
+        message_attachments (
+          id,
+          file_name,
+          file_url,
+          file_type,
+          file_size
+        )
+      `)
+      .eq("conversation_id", conversation.id)
+      .order("created_at", { ascending: true });
+
+    if (messagesError) {
+      return c.json({ error: messagesError.message }, 500);
+    }
+
+    return c.json({
+      conversation_id: conversation.id,
+      messages: messages || [],
+    });
+
+  } catch (error: any) {
+    console.error("Agent chat retrieval error:", error);
+
+    return c.json(
+      { error: error.message || "Failed to retrieve messages" },
+      500
+    );
+  }
+});
+
+// POST: Send a message in an assigned order conversation
+app.post("/make-server-73b64ebc/agent/orders/:id/messages", async (c) => {
+  try {
+    const orderId = c.req.param("id");
+    const { email, content } = await c.req.json();
+
+    const normalizedEmail = String(email || "").trim().toLowerCase();
+    const messageContent = String(content || "").trim();
+
+    if (!normalizedEmail || !messageContent) {
+      return c.json(
+        { error: "Agent email and message content are required" },
+        400
+      );
+    }
+
+    if (messageContent.length > 5000) {
+      return c.json({ error: "Message is too long" }, 400);
+    }
+
+    const supabase = getSupabaseClient(true);
+
+    // Verify agent
+    const { data: agent, error: agentError } = await supabase
+      .from("agents")
+      .select("id")
+      .eq("email", normalizedEmail)
+      .maybeSingle();
+
+    if (agentError || !agent) {
+      return c.json({ error: "Agent not found" }, 404);
+    }
+
+    // Verify order assignment
+    const { data: order, error: orderError } = await supabase
+      .from("orders")
+      .select("id, assigned_agent_id")
+      .eq("id", orderId)
+      .eq("assigned_agent_id", agent.id)
+      .maybeSingle();
+
+    if (orderError || !order) {
+      return c.json({ error: "Order is not assigned to this agent" }, 403);
+    }
+
+    // Find conversation
+    const { data: conversation, error: conversationError } =
+      await supabase
+        .from("conversations")
+        .select("id")
+        .eq("order_id", orderId)
+        .maybeSingle();
+
+    if (conversationError) {
+      return c.json({ error: conversationError.message }, 500);
+    }
+
+    if (!conversation) {
+      return c.json({ error: "Order conversation not found" }, 404);
+    }
+
+    // Verify agent is a conversation participant
+    const { data: participant, error: participantError } =
+      await supabase
+        .from("conversation_participants")
+        .select("id")
+        .eq("conversation_id", conversation.id)
+        .eq("participant_type", "agent")
+        .eq("participant_id", agent.id)
+        .maybeSingle();
+
+    if (participantError || !participant) {
+      return c.json(
+        { error: "Agent is not a participant in this conversation" },
+        403
+      );
+    }
+
+    // Save message
+    const { data: message, error: messageError } = await supabase
+      .from("messages")
+      .insert({
+        conversation_id: conversation.id,
+        sender_type: "agent",
+        sender_id: agent.id,
+        message_type: "text",
+        content: messageContent,
+      })
+      .select()
+      .single();
+
+    if (messageError) {
+      return c.json({ error: messageError.message }, 500);
+    }
+
+    // Update conversation timestamp
+    await supabase
+      .from("conversations")
+      .update({ updated_at: new Date().toISOString() })
+      .eq("id", conversation.id);
+
+    return c.json({ message }, 201);
+
+  } catch (error: any) {
+    console.error("Agent chat send error:", error);
+
+    return c.json(
+      { error: error.message || "Failed to send message" },
+      500
+    );
+  }
+});
+
+
+app.notFound((c) => {
+  return c.json({
+    error: "Route not found",
+    requestedPath: c.req.path,
+    method: c.req.method,
+  }, 404);
 });
 
 Deno.serve(app.fetch);

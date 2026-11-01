@@ -4,7 +4,7 @@ import { projectId, publicAnonKey } from "./supabase/info";
 export const PAYSTACK_PUBLIC_KEY =
   "pk_live_55f9d953888a4eaf6950d7619844794d72249396";
 
-const API_BASE_URL = `https://${projectId}.supabase.co/functions/v1/make-server-73b64ebc`;
+const API_BASE_URL = `https://${projectId}.supabase.co/functions/v1/server/make-server-73b64ebc`;
 
 // Helper to make API calls
 const apiCall = async (
@@ -14,6 +14,7 @@ const apiCall = async (
   const hasBody =
     options.method &&
     ["POST", "PUT", "PATCH"].includes(options.method);
+
   const headers: Record<string, string> = {
     ...(hasBody ? { "Content-Type": "application/json" } : {}),
     Authorization: `Bearer ${publicAnonKey}`,
@@ -25,10 +26,28 @@ const apiCall = async (
     headers,
   });
 
-  const data = await response.json();
+  // Read the raw response first so we can see exactly what
+  // the Supabase Edge Function is returning.
+  const raw = await response.text();
+
+  let data: any;
+
+  try {
+    data = raw ? JSON.parse(raw) : {};
+  } catch (parseError) {
+    console.error("========== INVALID API JSON ==========");
+    console.error("Endpoint:", endpoint);
+    console.error("Status:", response.status);
+    console.error("Raw response:", raw);
+    console.error("======================================");
+
+    throw new Error(
+      `Backend returned invalid JSON (${response.status}). Response: ${raw.slice(0, 500)}`
+    );
+  }
 
   if (!response.ok) {
-    throw new Error(data.error || "API request failed");
+    throw new Error(data?.error || "API request failed");
   }
 
   return data;
@@ -222,6 +241,10 @@ export const adminApi = {
   },
   getOrders: async (pin: string) =>
     apiCall("/admin/orders", { headers: { "X-Admin-Pin": pin } }),
+  getMessages: async (orderId: string, pin: string) =>
+  apiCall(`/admin/orders/${orderId}/messages`, {
+    headers: { "X-Admin-Pin": pin },
+  }),
   getSuggestedAgents: async (orderId: string, pin: string) =>
     apiCall(`/admin/orders/${orderId}/suggested-agents`, {
       headers: { "X-Admin-Pin": pin },
@@ -239,12 +262,26 @@ export const adminApi = {
     }),
 };
 
+
 export const agentOperationsApi = {
   getOrders: async (email: string) =>
     apiCall(`/agent/orders?${new URLSearchParams({ email })}`),
+
   updateStatus: async (orderId: string, email: string, status: string) =>
     apiCall(`/agent/orders/${orderId}/status`, {
       method: "POST",
       body: JSON.stringify({ email, status }),
     }),
+
+  getMessages: async (orderId: string, email: string) =>
+    apiCall(
+      `/agent/orders/${orderId}/messages?${new URLSearchParams({ email })}`
+    ),
+
+  sendMessage: async (orderId: string, email: string, content: string) =>
+    apiCall(`/agent/orders/${orderId}/messages`, {
+      method: "POST",
+      body: JSON.stringify({ email, content }),
+    }),
 };
+
