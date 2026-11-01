@@ -265,4 +265,4 @@ For platform support or technical issues, contact the admin via WhatsApp.
 
 ---
 
-Built with ❤️ for the logistics industry
+Built with ❤️ by James King; for the logistics industry.

@@ -245,6 +245,12 @@ export const adminApi = {
   apiCall(`/admin/orders/${orderId}/messages`, {
     headers: { "X-Admin-Pin": pin },
   }),
+  sendMessage: async (orderId: string, content: string, pin: string) =>
+  apiCall(`/admin/orders/${orderId}/messages`, {
+    method: "POST",
+    headers: { "X-Admin-Pin": pin },
+    body: JSON.stringify({ content }),
+  }),
   getSuggestedAgents: async (orderId: string, pin: string) =>
     apiCall(`/admin/orders/${orderId}/suggested-agents`, {
       headers: { "X-Admin-Pin": pin },

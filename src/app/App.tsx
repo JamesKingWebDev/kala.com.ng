@@ -1,4 +1,5 @@
 import { FormEvent, useEffect, useMemo, useState } from "react";
+import { supabase } from "../utils/supabase/client";
 import {
   ArrowRight, BadgeCheck, CalendarDays, Check, CheckCircle2, ChevronDown,
   ChevronRight, CircleDollarSign, Clock3, FileText, Headphones, Home,
@@ -52,6 +53,7 @@ function Navbar() {
           <Link to="/services" className="transition hover:text-white">Services</Link>
           <Link to="/track" className="transition hover:text-white">Track order</Link>
           <Link to="/become-an-agent" className="transition hover:text-white">Become an agent</Link>
+<Link to="/agent" className="transition hover:text-white">Agent portal</Link>
           <Link to="/admin" className="transition hover:text-white">Operations</Link>
         </nav>
         <div className="hidden items-center gap-3 md:flex">
@@ -194,7 +196,7 @@ function HomePage() {
           Your errands.
           <br />
           <span className="italic text-accent">
-            Our responsibility.
+            Our duty.
           </span>
         </h1>
 
@@ -1604,6 +1606,8 @@ function AdminPage() {
   const [chatMessages, setChatMessages] = useState<any[]>([]);
 const [chatLoading, setChatLoading] = useState(false);
 const [chatError, setChatError] = useState("");
+const [chatMessage, setChatMessage] = useState("");
+const [chatSending, setChatSending] = useState(false);
   const load = async (adminPin = pin) => { const result = await adminApi.getOrders(adminPin); setOrders(result.orders || []); setSelected(result.orders?.[0] || null); };
   useEffect(() => { if (pin) load().catch(() => setPin("")); }, [pin]);
   const login = async (e: FormEvent) => { e.preventDefault(); try { await adminApi.login(input); try { sessionStorage.setItem("kala_ops_pin", input); } catch {} setPin(input); } catch { alert("Incorrect PIN"); } };
@@ -1644,6 +1648,31 @@ const [chatError, setChatError] = useState("");
   };
 }, [selected?.id, pin]);
 
+const handleSendChatMessage = async () => {
+  const content = chatMessage.trim();
+
+  if (!content || !selected?.id || !pin || chatSending) {
+    return;
+  }
+
+  setChatSending(true);
+  setChatError("");
+
+  try {
+    await adminApi.sendMessage(selected.id, content, pin);
+
+    setChatMessage("");
+
+    const response = await adminApi.getMessages(selected.id, pin);
+    setChatMessages(response.messages || []);
+  } catch (error: any) {
+    console.error("Failed to send admin message:", error);
+    setChatError(error?.message || "Unable to send message.");
+  } finally {
+    setChatSending(false);
+  }
+};
+
   useEffect(() => { if (selected && pin) adminApi.getSuggestedAgents(selected.id, pin).then((r)=>setAgents(r.agents || [])).catch(()=>setAgents([])); }, [selected, pin]);
   const assign = async (agentId: string) => { if (!selected) return; await adminApi.assignOrder(selected.id, agentId, Number(payment), pin); await load(); };
   if (!pin) return <div className="grid min-h-screen place-items-center bg-primary p-5"><form onSubmit={login} className="w-full max-w-sm rounded-[30px] bg-white p-8 text-center"><div className="mx-auto grid h-14 w-14 place-items-center rounded-2xl bg-secondary text-accent"><ShieldCheck /></div><h1 className="mt-6 font-display text-3xl text-primary">Operations access</h1><p className="mt-2 text-sm text-muted-foreground">Enter your admin PIN to continue.</p><input required type="password" inputMode="numeric" value={input} onChange={(e)=>setInput(e.target.value)} className={`${fieldStyle} text-center text-xl tracking-[.4em]`} placeholder="••••" /><button className="mt-4 w-full rounded-2xl bg-primary py-3.5 font-bold text-white">Enter workspace</button><Link to="/" className="mt-5 block text-xs text-muted-foreground">Return to KALA</Link></form></div>;
@@ -1676,6 +1705,138 @@ const [chatError, setChatError] = useState("");
           <div className="rounded-[24px] bg-white p-3"><div className="grid grid-cols-3 gap-1 rounded-xl bg-secondary/60 p-1">{["ACTIVE","ATTENDED","PENDING"].map(x=><button key={x} onClick={()=>setTab(x)} className={`rounded-lg px-2 py-2 text-[10px] font-bold ${tab===x?"bg-white text-primary shadow-sm":"text-muted-foreground"}`}>{x}</button>)}</div><div className="mt-2 space-y-2">{filtered.map(o=><button key={o.id} onClick={()=>setSelected(o)} className={`w-full rounded-2xl border p-4 text-left ${selected?.id===o.id?"border-accent bg-accent/5":"border-transparent hover:bg-secondary/40"}`}><div className="flex justify-between gap-2"><b className="text-sm">{o.client_name}</b><small className="font-mono text-[10px] text-muted-foreground">{o.reference_number}</small></div><p className="mt-2 truncate text-xs text-muted-foreground">{o.services?.name || "Service request"} · {o.lga}</p><span className="mt-3 inline-block rounded-full bg-secondary px-2 py-1 text-[9px] font-bold">{o.status}</span></button>)}{!filtered.length&&<div className="p-8 text-center text-sm text-muted-foreground">No orders in this view.</div>}</div></div>
           {selected ? <div className="space-y-5">
             <section className="rounded-[24px] bg-white p-6"><div className="flex flex-wrap items-start justify-between gap-4"><div><p className="font-mono text-xs text-accent">{selected.reference_number}</p><h2 className="mt-1 font-display text-3xl text-primary">{selected.services?.name || "Service order"}</h2><p className="mt-1 text-sm text-muted-foreground">{selected.client_name} · {selected.client_phone}</p></div><span className="rounded-full bg-accent/10 px-4 py-2 text-xs font-bold text-[#8a6500]">{statusLabel[selected.status] || selected.status}</span></div><div className="mt-6 grid gap-4 border-t border-border pt-6 sm:grid-cols-3"><div><small className="text-muted-foreground">LOCATION</small><p className="mt-1 text-sm font-semibold">{selected.pickup_address || `${selected.lga}, ${selected.state}`}</p></div><div><small className="text-muted-foreground">DATE & TIME</small><p className="mt-1 text-sm font-semibold">{selected.preferred_date || "Flexible"} · {selected.preferred_time || "TBC"}</p></div><div><small className="text-muted-foreground">PAYMENT</small><p className="mt-1 text-sm font-semibold">{selected.payment_status || "Not quoted"}</p></div></div><p className="mt-6 rounded-2xl bg-secondary/50 p-4 text-sm leading-6 text-primary/75">{selected.service_description}</p></section>
+            <section className="rounded-[24px] bg-white p-6">
+  <div className="flex items-center justify-between">
+    <div>
+      <p className="text-xs font-bold uppercase tracking-[.2em] text-accent">
+        Operations chat
+      </p>
+      <h3 className="mt-1 font-display text-2xl text-primary">
+        Order conversation
+      </h3>
+      <p className="mt-1 text-xs text-muted-foreground">
+        {selected.reference_number}
+      </p>
+    </div>
+
+    <span className="rounded-full bg-green-100 px-3 py-1 text-[10px] font-bold text-green-700">
+      LIVE
+    </span>
+  </div>
+
+  <div className="mt-5 max-h-[450px] min-h-[180px] space-y-4 overflow-y-auto rounded-2xl bg-secondary/30 p-4">
+
+    {chatLoading && (
+      <p className="py-8 text-center text-sm text-muted-foreground">
+        Loading conversation...
+      </p>
+    )}
+
+    {!chatLoading && chatError && (
+      <p className="py-8 text-center text-sm text-red-600">
+        {chatError}
+      </p>
+    )}
+
+    {!chatLoading && !chatError && chatMessages.length === 0 && (
+      <p className="py-8 text-center text-sm text-muted-foreground">
+        No messages yet. Messages from the client and assigned agent will appear here.
+      </p>
+    )}
+
+    {!chatLoading && !chatError && chatMessages.map((message) => {
+      const isAdmin = message.sender_type === "admin";
+
+      return (
+        <div
+          key={message.id}
+          className={`flex ${isAdmin ? "justify-end" : "justify-start"}`}
+        >
+          <div
+            className={`max-w-[85%] rounded-2xl px-4 py-3 ${
+              isAdmin
+                ? "rounded-br-sm bg-primary text-white"
+                : "rounded-bl-sm bg-white text-primary shadow-sm"
+            }`}
+          >
+            <p className={`mb-1 text-[10px] font-bold uppercase ${
+              isAdmin ? "text-accent" : "text-muted-foreground"
+            }`}>
+              {message.sender_type === "admin"
+                ? "Admin"
+                : message.sender_type === "agent"
+                ? "Agent"
+                : "Client"}
+            </p>
+
+            {message.message_type === "text" ? (
+              <p className="whitespace-pre-wrap break-words text-sm leading-6">
+                {message.content}
+              </p>
+            ) : (
+              <p className="text-sm">
+                {message.content || "Attachment"}
+              </p>
+            )}
+
+            {message.message_attachments?.map((attachment: any) => (
+              <a
+                key={attachment.id}
+                href={attachment.file_url}
+                target="_blank"
+                rel="noreferrer"
+                className={`mt-2 block text-xs underline ${
+                  isAdmin ? "text-accent" : "text-primary"
+                }`}
+              >
+                {attachment.file_name || "View attachment"}
+              </a>
+            ))}
+
+            <p className={`mt-2 text-[9px] ${
+              isAdmin ? "text-white/50" : "text-muted-foreground"
+            }`}>
+              {new Date(message.created_at).toLocaleString()}
+            </p>
+          </div>
+        </div>
+      );
+    })}
+  </div>
+</section>
+
+<div className="mt-4">
+  {chatError && (
+    <p className="mb-2 text-xs text-red-600">
+      {chatError}
+    </p>
+  )}
+
+  <form
+    onSubmit={(e) => {
+      e.preventDefault();
+      handleSendChatMessage();
+    }}
+    className="flex gap-2"
+  >
+    <input
+      value={chatMessage}
+      onChange={(e) => setChatMessage(e.target.value)}
+      placeholder="Type a message..."
+      disabled={chatSending}
+      className="min-w-0 flex-1 rounded-xl border border-border bg-white px-4 py-3 text-sm outline-none transition focus:border-accent focus:ring-2 focus:ring-accent/20 disabled:opacity-60"
+    />
+
+    <button
+      type="submit"
+      disabled={!chatMessage.trim() || chatSending}
+      className="rounded-xl bg-primary px-5 py-3 text-xs font-bold text-white transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-40"
+    >
+      {chatSending ? "Sending..." : "Send"}
+    </button>
+  </form>
+</div>
+
             <section className="rounded-[24px] bg-white p-6"><div className="flex items-center justify-between"><div><p className="text-xs font-bold uppercase tracking-[.2em] text-accent">Suggested agents</p><h3 className="mt-1 font-display text-2xl text-primary">Best available matches</h3></div><MapPin className="text-accent" /></div><div className="mt-5 space-y-3">{agents.map(a=><div key={a.id} className="grid gap-4 rounded-2xl border border-border p-4 sm:grid-cols-[1fr_auto] sm:items-center"><div className="flex gap-3"><span className="grid h-11 w-11 place-items-center rounded-full bg-primary font-bold text-accent">{(a.owner_name||a.business_name||"KA").slice(0,2).toUpperCase()}</span><div><b className="text-sm">{a.owner_name || a.business_name}</b><p className="mt-1 text-xs text-muted-foreground">{a.distance_km ? `${a.distance_km} km away · `:""}{a.availability_status || "Available"} · Rating {a.rating || "4.8"}</p></div></div><div className="flex items-center gap-2"><input value={payment} onChange={(e)=>setPayment(e.target.value)} className="w-24 rounded-xl border border-border px-3 py-2 text-sm" aria-label="Agent payment" /><button onClick={()=>assign(a.id)} className="rounded-xl bg-primary px-4 py-2 text-xs font-bold text-white">Assign</button></div></div>)}{!agents.length&&<p className="rounded-2xl bg-secondary/50 p-5 text-sm text-muted-foreground">No verified available match yet. Try the Agents workspace.</p>}</div></section>
           </div> : <div className="grid min-h-96 place-items-center rounded-[24px] bg-white text-muted-foreground">Select an order to begin.</div>}
         </div>
@@ -1685,13 +1846,33 @@ const [chatError, setChatError] = useState("");
 }
 
 function AgentPage() {
-  const [email, setEmail] = useState(() => {
-  try {
-    return localStorage.getItem("kala_agent_email") || "";
-  } catch {
-    return "";
-  }
-});
+const [email, setEmail] = useState("");
+const [password, setPassword] = useState("");
+const [authLoading, setAuthLoading] = useState(false);
+const [authError, setAuthError] = useState("");
+const [isPasswordRecovery, setIsPasswordRecovery] = useState(false);
+const [newPassword, setNewPassword] = useState("");
+useEffect(() => {
+  const {
+    data: { subscription },
+  } = supabase.auth.onAuthStateChange((event, session) => {
+    if (event === "PASSWORD_RECOVERY") {
+      setIsPasswordRecovery(true);
+      setEmail(session?.user?.email || "");
+      return;
+    }
+
+    if (session?.user?.email) {
+      setEmail(session.user.email);
+    } else if (event === "SIGNED_OUT") {
+      setEmail("");
+    }
+  });
+
+  return () => {
+    subscription.unsubscribe();
+  };
+}, []);
 const [entry, setEntry] = useState("");
 const [orders, setOrders] = useState<any[]>([]);
 const [chatOrder, setChatOrder] = useState<any>(null);
@@ -1795,12 +1976,272 @@ const handleSendChatMessage = async () => {
       console.error("Failed to load agent orders:", error);
     });
 }, [email]);
-  const enter=(e:FormEvent)=>{e.preventDefault();try{localStorage.setItem("kala_agent_email",entry);}catch{}setEmail(entry);};
+  const enter = async (e: FormEvent) => {
+  e.preventDefault();
+
+  const emailAddress = entry.trim();
+
+  if (!emailAddress || !password) {
+    return;
+  }
+
+  const { data, error } = await supabase.auth.signInWithPassword({
+    email: emailAddress,
+    password,
+  });
+
+  if (error) {
+    console.error("Agent login failed:", error);
+    alert(error.message);
+    return;
+  }
+
+  setEmail(data.user?.email || emailAddress);
+};
+
+const handleForgotPassword = async () => {
+  const emailAddress = entry.trim();
+
+  if (!emailAddress) {
+    setAuthError("Enter your registered email address first.");
+    return;
+  }
+
+  setAuthLoading(true);
+  setAuthError("");
+
+  try {
+    const { error } = await supabase.auth.resetPasswordForEmail(
+      emailAddress,
+      {
+        redirectTo: `${window.location.origin}/agent`,
+      }
+    );
+
+    if (error) {
+      setAuthError(error.message);
+      return;
+    }
+
+    alert("If an account exists for this email, a password reset link will be sent.");
+  } catch (error: any) {
+    setAuthError(error.message || "Unable to request password reset.");
+  } finally {
+    setAuthLoading(false);
+  }
+};
+
+const handlePasswordUpdate = async (e: FormEvent) => {
+  e.preventDefault();
+
+  if (newPassword.length < 8) {
+    setAuthError("Your new password must contain at least 8 characters.");
+    return;
+  }
+
+  setAuthLoading(true);
+  setAuthError("");
+
+  try {
+    const { error } = await supabase.auth.updateUser({
+      password: newPassword,
+    });
+
+    if (error) {
+      setAuthError(error.message);
+      return;
+    }
+
+    setNewPassword("");
+    setPassword("");
+    setIsPasswordRecovery(false);
+
+    alert("Your password has been updated successfully. Please sign in again.");
+
+    await supabase.auth.signOut();
+    setEmail("");
+  } catch (error: any) {
+    setAuthError(error.message || "Unable to update password.");
+  } finally {
+    setAuthLoading(false);
+  }
+};
+
+
   const share=()=>{if(!navigator.geolocation){setLocationState("GPS unavailable");return;}setLocationState("Requesting permission…");navigator.geolocation.getCurrentPosition(async(pos)=>{try{await locationApi.update(email,pos.coords.latitude,pos.coords.longitude,"Current area");setLive(true);setLocationState("Updated just now");}catch{setLocationState("Could not send location");}},()=>setLocationState("Permission denied — tracking is off"));};
-  if(!email)return <div className="grid min-h-screen place-items-center bg-primary p-5"><form onSubmit={enter} className="w-full max-w-md rounded-[30px] bg-white p-8"><Logo light={false}/><h1 className="mt-10 font-display text-4xl text-primary">Agent portal</h1><p className="mt-3 text-sm leading-6 text-muted-foreground">Access assigned work, conversations, location sharing and weekly earnings.</p><label className="mt-7 block text-sm font-semibold">Registered email<input required type="email" value={entry} onChange={e=>setEntry(e.target.value)} className={fieldStyle} /></label><button className="mt-4 w-full rounded-2xl bg-accent py-4 font-bold text-primary">Continue</button></form></div>;
+
+  if (isPasswordRecovery) {
+  return (
+    <div className="grid min-h-screen place-items-center bg-primary p-5">
+      <div className="absolute left-5 top-5">
+        <Link
+          to="/"
+          className="inline-flex items-center gap-2 rounded-full border border-white/20 px-4 py-2 text-sm font-semibold text-white transition hover:bg-white/10"
+        >
+          <Home className="h-4 w-4" />
+          Return to Home
+        </Link>
+      </div>
+      <form
+        onSubmit={handlePasswordUpdate}
+        className="w-full max-w-md rounded-[30px] bg-white p-8"
+      >
+        <Logo light={false} />
+
+        <h1 className="mt-10 font-display text-3xl text-primary">
+          Reset your password
+        </h1>
+
+        <p className="mt-3 text-sm leading-6 text-muted-foreground">
+          Create a new password for your KALA Agent account.
+        </p>
+
+        <label className="mt-7 block text-sm font-semibold">
+          New password
+          <input
+            required
+            type="password"
+            minLength={8}
+            value={newPassword}
+            onChange={(e) => setNewPassword(e.target.value)}
+            className={fieldStyle}
+            autoComplete="new-password"
+          />
+        </label>
+
+        {authError && (
+          <p className="mt-4 rounded-xl bg-red-50 p-3 text-sm text-red-600">
+            {authError}
+          </p>
+        )}
+
+        <button
+          type="submit"
+          disabled={authLoading}
+          className="mt-6 w-full rounded-2xl bg-accent py-4 font-bold text-primary disabled:opacity-60"
+        >
+          {authLoading ? "Updating password..." : "Update password"}
+        </button>
+      </form>
+    </div>
+  );
+}
+
+
+ if (!email) {
+  return (
+    <div className="grid min-h-screen place-items-center bg-primary p-5">
+      <div className="absolute left-5 top-5 z-50">
+  <Link
+    to="/"
+    className="inline-flex items-center gap-2 rounded-full border border-white/20 px-4 py-2 text-sm font-semibold text-white transition hover:bg-white/10"
+  >
+    <Home className="h-4 w-4" />
+    Return to Home
+  </Link>
+</div>
+      <form
+        onSubmit={enter}
+        className="w-full max-w-md rounded-[30px] bg-white p-8"
+      >
+        <Logo light={false} />
+
+        <h1 className="mt-10 font-display text-4xl text-primary">
+          Agent portal
+        </h1>
+
+        <p className="mt-3 text-sm leading-6 text-muted-foreground">
+          Access assigned work, conversations, location sharing and weekly earnings.
+        </p>
+
+        <label className="mt-7 block text-sm font-semibold">
+          Registered email
+          <input
+            required
+            type="email"
+            value={entry}
+            onChange={(e) => setEntry(e.target.value)}
+            className={fieldStyle}
+            autoComplete="username"
+          />
+        </label>
+
+        <label className="mt-5 block text-sm font-semibold">
+          Password
+          <input
+            required
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            className={fieldStyle}
+            autoComplete="current-password"
+          />
+        </label>
+
+        {authError && (
+          <p className="mt-4 rounded-xl bg-red-50 p-3 text-sm text-red-600">
+            {authError}
+          </p>
+        )}
+
+        <button
+          type="submit"
+          disabled={authLoading}
+          className="mt-6 w-full rounded-2xl bg-accent py-4 font-bold text-primary disabled:opacity-60"
+        >
+          {authLoading ? "Signing in..." : "Sign in"}
+        </button>
+        <button
+  type="button"
+  onClick={handleForgotPassword}
+  disabled={authLoading}
+  className="mt-5 w-full text-center text-sm font-semibold text-primary hover:text-accent"
+>
+  Forgot password?
+</button>
+      </form>
+    </div>
+  );
+}
   const completed=orders.filter(o=>["COMPLETED","CONFIRMED"].includes(o.status));
   const weekly=completed.reduce((s,o)=>s+Number(o.agent_payment||0),0);
-  return <div className="min-h-screen bg-background"><header className="flex h-16 items-center justify-between bg-primary px-5 text-white"><Logo/><div className="flex items-center gap-3 text-sm"><span className="hidden text-white/50 sm:inline">{email}</span><span className="grid h-9 w-9 place-items-center rounded-full bg-accent text-primary"><UserRound className="h-4 w-4"/></span></div></header><main className="mx-auto max-w-[1280px] px-5 py-8"><div className="flex flex-wrap items-end justify-between gap-4"><div><p className="text-xs font-bold uppercase tracking-[.2em] text-accent">Agent workspace</p><h1 className="font-display text-4xl text-primary">Your week at KALA.</h1></div><button onClick={share} className={`flex items-center gap-2 rounded-full px-5 py-3 text-sm font-bold ${live?"bg-green-100 text-green-700":"bg-primary text-white"}`}><MapPin className="h-4 w-4"/>{live?"Live location on":"Share My Location"}</button></div><p className="mt-2 text-xs text-muted-foreground">{locationState}. Browser tracking may pause when this page is closed or suspended.</p><div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">{[["Total Orders",orders.length,Package],["Total Income",`₦${weekly.toLocaleString()}`,CircleDollarSign],["Weekly Orders",completed.length,CalendarDays],["Weekly Income",`₦${weekly.toLocaleString()}`,Star]].map(([label,value,Icon]:any)=><div key={label} className="rounded-[24px] border border-border bg-white p-6"><Icon className="h-5 w-5 text-accent"/><p className="mt-6 text-xs font-bold uppercase tracking-[.12em] text-muted-foreground">{label}</p><p className="mt-2 font-display text-3xl text-primary">{value}</p></div>)}</div><div className="mt-6 grid gap-6 lg:grid-cols-[1fr_320px]"><section className="rounded-[28px] border border-border bg-white p-6"><div className="flex items-center justify-between"><h2 className="font-display text-2xl text-primary">Assigned orders</h2><span className="rounded-full bg-secondary px-3 py-1 text-xs">{orders.length} total</span></div><div className="mt-5 space-y-3">{orders.map(o=><div key={o.id} className="grid gap-4 rounded-2xl border border-border p-4 sm:grid-cols-[1fr_auto] sm:items-center"><div><div className="flex gap-2"><b className="font-mono text-xs text-accent">{o.reference_number}</b><span className="text-xs text-muted-foreground">{statusLabel[o.status]||o.status}</span></div><h3 className="mt-2 font-semibold">{o.services?.name||"Service order"}</h3><p className="mt-1 text-xs text-muted-foreground">{o.client_name} · {o.lga}, {o.state} · ₦{Number(o.agent_payment||0).toLocaleString()}</p></div><div className="flex gap-2"><button
+  return <div className="min-h-screen bg-background"><header className="flex h-16 items-center justify-between bg-primary px-5 text-white"><div className="flex items-center gap-3">
+  <Logo />
+  <Link
+    to="/"
+    className="hidden sm:inline-flex items-center gap-2 rounded-full border border-white/20 px-4 py-2 text-xs font-semibold text-white transition hover:bg-white/10"
+  >
+    <Home className="h-4 w-4" />
+    Return to Home
+  </Link>
+</div><div className="flex items-center gap-3 text-sm"><div className="flex items-center gap-3 text-sm">
+  <span className="hidden text-white/50 sm:inline">{email}</span>
+
+  <span className="grid h-9 w-9 place-items-center rounded-full bg-accent text-primary">
+    <UserRound className="h-4 w-4"/>
+  </span>
+
+  <button
+    type="button"
+    onClick={async () => {
+      const { error } = await supabase.auth.signOut();
+
+      if (error) {
+        alert("Unable to log out: " + error.message);
+        return;
+      }
+
+      setEmail("");
+      setPassword("");
+      setEntry("");
+      setAuthError("");
+      setIsPasswordRecovery(false);
+    }}
+    className="rounded-full border border-white/20 px-4 py-2 font-semibold text-white transition hover:bg-white/10"
+  >
+    Logout
+  </button>
+</div><span className="grid h-9 w-9 place-items-center rounded-full bg-accent text-primary"><UserRound className="h-4 w-4"/></span></div></header><main className="mx-auto max-w-[1280px] px-5 py-8"><div className="flex flex-wrap items-end justify-between gap-4"><div><p className="text-xs font-bold uppercase tracking-[.2em] text-accent">Agent workspace</p><h1 className="font-display text-4xl text-primary">Your week at KALA.</h1></div><button onClick={share} className={`flex items-center gap-2 rounded-full px-5 py-3 text-sm font-bold ${live?"bg-green-100 text-green-700":"bg-primary text-white"}`}><MapPin className="h-4 w-4"/>{live?"Live location on":"Share My Location"}</button></div><p className="mt-2 text-xs text-muted-foreground">{locationState}. Browser tracking may pause when this page is closed or suspended.</p><div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">{[["Total Orders",orders.length,Package],["Total Income",`₦${weekly.toLocaleString()}`,CircleDollarSign],["Weekly Orders",completed.length,CalendarDays],["Weekly Income",`₦${weekly.toLocaleString()}`,Star]].map(([label,value,Icon]:any)=><div key={label} className="rounded-[24px] border border-border bg-white p-6"><Icon className="h-5 w-5 text-accent"/><p className="mt-6 text-xs font-bold uppercase tracking-[.12em] text-muted-foreground">{label}</p><p className="mt-2 font-display text-3xl text-primary">{value}</p></div>)}</div><div className="mt-6 grid gap-6 lg:grid-cols-[1fr_320px]"><section className="rounded-[28px] border border-border bg-white p-6"><div className="flex items-center justify-between"><h2 className="font-display text-2xl text-primary">Assigned orders</h2><span className="rounded-full bg-secondary px-3 py-1 text-xs">{orders.length} total</span></div><div className="mt-5 space-y-3">{orders.map(o=><div key={o.id} className="grid gap-4 rounded-2xl border border-border p-4 sm:grid-cols-[1fr_auto] sm:items-center"><div><div className="flex gap-2"><b className="font-mono text-xs text-accent">{o.reference_number}</b><span className="text-xs text-muted-foreground">{statusLabel[o.status]||o.status}</span></div><h3 className="mt-2 font-semibold">{o.services?.name||"Service order"}</h3><p className="mt-1 text-xs text-muted-foreground">{o.client_name} · {o.lga}, {o.state} · ₦{Number(o.agent_payment||0).toLocaleString()}</p></div><div className="flex gap-2"><button
   onClick={() => setChatOrder(o)}
   className="rounded-xl border border-border px-3 py-2 text-xs font-bold"
   title="Open chat"

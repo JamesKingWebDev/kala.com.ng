@@ -1,4 +1,4 @@
 // Supabase project info
 export const projectId = "hwwzpukbxvczxldcbkcz";
 export const publicAnonKey =
-  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFtcmtyZmxteGRraXl2bmdlaGZ3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYxNzA4NDYsImV4cCI6MjA5MTc0Njg0Nn0.RNf8_kYT_Ae-T_UbrJI3KEoXmislohIH9oj5jV5I_XY";
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imh3d3pwdWtieHZjenhsZGNia2N6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTMzMzA5NDksImV4cCI6MjEwODkwNjk0OX0.bm34sEnzd5ZSJH9IQpBegwtGwocS-r-4IRipAXgkun8";

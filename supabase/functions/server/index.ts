@@ -1389,6 +1389,35 @@ app.get("/make-server-73b64ebc/admin/orders/:id/messages", async (c) => {
       });
     }
 
+    // Ensure the KALA Operations admin is a participant.
+// This also repairs conversations created before admin
+// participation was added to the assignment workflow.
+const { error: participantError } = await supabase
+  .from("conversation_participants")
+  .upsert(
+    {
+      conversation_id: conversation.id,
+      participant_type: "admin",
+      participant_id: KALA_OPERATIONS_ADMIN_ID,
+    },
+    {
+      onConflict: "conversation_id,participant_type,participant_id",
+      ignoreDuplicates: true,
+    }
+  );
+
+if (participantError) {
+  console.error(
+    "Admin conversation participant setup failed:",
+    participantError
+  );
+
+  return c.json(
+    { error: participantError.message },
+    500
+  );
+}
+
     // Retrieve all messages in chronological order
     const { data: messages, error: messagesError } = await supabase
       .from("messages")
@@ -1425,6 +1454,117 @@ app.get("/make-server-73b64ebc/admin/orders/:id/messages", async (c) => {
 
     return c.json(
       { error: error.message || "Failed to retrieve messages" },
+      500
+    );
+  }
+});
+
+// POST: Send a message in an order conversation (Admin)
+app.post("/make-server-73b64ebc/admin/orders/:id/messages", async (c) => {
+  if (!requireAdmin(c)) {
+    return c.json({ error: "Admin access required" }, 401);
+  }
+
+  try {
+    const orderId = c.req.param("id");
+    const { content } = await c.req.json();
+
+    const messageContent = String(content || "").trim();
+
+    if (!messageContent) {
+      return c.json({ error: "Message content is required" }, 400);
+    }
+
+    if (messageContent.length > 5000) {
+      return c.json({ error: "Message is too long" }, 400);
+    }
+
+    const supabase = getSupabaseClient(true);
+
+    // Verify that the order exists
+    const { data: order, error: orderError } = await supabase
+      .from("orders")
+      .select("id")
+      .eq("id", orderId)
+      .maybeSingle();
+
+    if (orderError) {
+      return c.json({ error: orderError.message }, 500);
+    }
+
+    if (!order) {
+      return c.json({ error: "Order not found" }, 404);
+    }
+
+    // Find the order conversation
+    const { data: conversation, error: conversationError } =
+      await supabase
+        .from("conversations")
+        .select("id")
+        .eq("order_id", orderId)
+        .maybeSingle();
+
+    if (conversationError) {
+      return c.json({ error: conversationError.message }, 500);
+    }
+
+    if (!conversation) {
+      return c.json({ error: "Order conversation not found" }, 404);
+    }
+
+    // Verify that the KALA operations admin is a participant
+    const { data: participant, error: participantError } =
+      await supabase
+        .from("conversation_participants")
+        .select("id")
+        .eq("conversation_id", conversation.id)
+        .eq("participant_type", "admin")
+        .eq("participant_id", KALA_OPERATIONS_ADMIN_ID)
+        .maybeSingle();
+
+    if (participantError) {
+      return c.json({ error: participantError.message }, 500);
+    }
+
+    if (!participant) {
+      return c.json(
+        { error: "Admin is not a participant in this conversation" },
+        403
+      );
+    }
+
+    // Save the admin message
+    const { data: message, error: messageError } = await supabase
+      .from("messages")
+      .insert({
+        conversation_id: conversation.id,
+        sender_type: "admin",
+        sender_id: KALA_OPERATIONS_ADMIN_ID,
+        message_type: "text",
+        content: messageContent,
+      })
+      .select()
+      .single();
+
+    if (messageError) {
+      return c.json({ error: messageError.message }, 500);
+    }
+
+    // Update conversation timestamp
+    await supabase
+      .from("conversations")
+      .update({
+        updated_at: new Date().toISOString(),
+      })
+      .eq("id", conversation.id);
+
+    return c.json({ message }, 201);
+
+  } catch (error: any) {
+    console.error("Admin chat send error:", error);
+
+    return c.json(
+      { error: error.message || "Failed to send message" },
       500
     );
   }
