@@ -59,6 +59,48 @@ const requireAdmin = (c: any) => {
   return supplied && supplied === expected;
 };
 
+const requireSuperAdmin = async (c: any) => {
+  const authHeader = c.req.header("Authorization");
+
+  if (!authHeader?.startsWith("Bearer ")) {
+    return false;
+  }
+
+  const accessToken = authHeader.replace("Bearer ", "").trim();
+
+  if (!accessToken) {
+    return false;
+  }
+
+  const supabase = getSupabaseClient(true);
+
+  const {
+    data: { user },
+    error: userError,
+  } = await supabase.auth.getUser(accessToken);
+
+  if (userError || !user) {
+    console.error("Super Admin authentication failed:", userError);
+    return false;
+  }
+
+  const { data: roleRecord, error: roleError } = await supabase
+    .from("user_roles")
+    .select("role, is_active")
+    .eq("user_id", user.id)
+    .maybeSingle();
+
+  if (roleError) {
+    console.error("Failed to verify user role:", roleError);
+    return false;
+  }
+
+  return (
+    roleRecord?.role === "super_admin" &&
+    roleRecord?.is_active === true
+  );
+};
+
 const makeReference = () => {
   const year = new Date().getFullYear().toString().slice(-2);
   const random = crypto.randomUUID().replaceAll("-", "").slice(0, 6).toUpperCase();

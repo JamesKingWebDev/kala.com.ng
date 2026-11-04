@@ -1597,7 +1597,15 @@ function OrderTracker({ order }: { order: any }) {
 
 function AdminPage() {
   const [pin, setPin] = useState(() => { try { return sessionStorage.getItem("kala_ops_pin") || ""; } catch { return ""; } });
+  const [adminSession, setAdminSession] = useState<any>(null);
   const [input, setInput] = useState("");
+  const [adminEmail, setAdminEmail] = useState("");
+const [adminPassword, setAdminPassword] = useState("");
+const [isAdminPasswordRecovery, setIsAdminPasswordRecovery] = useState(false);
+const [adminNewPassword, setAdminNewPassword] = useState("");
+const [adminConfirmPassword, setAdminConfirmPassword] = useState("");
+const [adminAuthLoading, setAdminAuthLoading] = useState(false);
+const [adminAuthError, setAdminAuthError] = useState("");
   const [orders, setOrders] = useState<any[]>([]);
   const [selected, setSelected] = useState<any>(null);
   const [agents, setAgents] = useState<any[]>([]);
@@ -1608,9 +1616,152 @@ const [chatLoading, setChatLoading] = useState(false);
 const [chatError, setChatError] = useState("");
 const [chatMessage, setChatMessage] = useState("");
 const [chatSending, setChatSending] = useState(false);
-  const load = async (adminPin = pin) => { const result = await adminApi.getOrders(adminPin); setOrders(result.orders || []); setSelected(result.orders?.[0] || null); };
-  useEffect(() => { if (pin) load().catch(() => setPin("")); }, [pin]);
-  const login = async (e: FormEvent) => { e.preventDefault(); try { await adminApi.login(input); try { sessionStorage.setItem("kala_ops_pin", input); } catch {} setPin(input); } catch { alert("Incorrect PIN"); } };
+const load = async (adminPin = pin) => { const result = await adminApi.getOrders(adminPin); setOrders(result.orders || []); setSelected(result.orders?.[0] || null); };
+
+
+useEffect(() => {
+  const loadAdminSession = async () => {
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
+
+    setAdminSession(session);
+  };
+
+  loadAdminSession();
+
+  const {
+    data: { subscription },
+  } = supabase.auth.onAuthStateChange((event, session) => {
+    setAdminSession(session);
+
+    if (event === "PASSWORD_RECOVERY") {
+      setIsAdminPasswordRecovery(true);
+      setAdminEmail(session?.user?.email || "");
+      setAdminAuthError("");
+    }
+  });
+
+  return () => {
+    subscription.unsubscribe();
+  };
+}, []);
+
+useEffect(() => { if (pin) load().catch(() => setPin("")); }, [pin]);
+const login = async (e: FormEvent) => {
+e.preventDefault();
+
+  const email = adminEmail.trim();
+
+  if (!email || !adminPassword) {
+    setAdminAuthError("Enter your email address and password.");
+    return;
+  }
+
+  setAdminAuthLoading(true);
+  setAdminAuthError("");
+
+  try {
+    const { data, error } = await supabase.auth.signInWithPassword({
+      email,
+      password: adminPassword,
+    });
+
+    if (error) {
+      setAdminAuthError(error.message);
+      return;
+    }
+
+    if (!data.user) {
+      setAdminAuthError("Authentication failed. Please try again.");
+      return;
+    }
+
+    setAdminEmail(data.user.email || email);
+  } catch (error: any) {
+    setAdminAuthError(
+      error?.message || "Unable to sign in. Please try again."
+    );
+  } finally {
+    setAdminAuthLoading(false);
+  }
+};
+
+const handleAdminForgotPassword = async () => {
+  const email = adminEmail.trim();
+
+  if (!email) {
+    setAdminAuthError("Enter your administrator email address first.");
+    return;
+  }
+
+  setAdminAuthLoading(true);
+  setAdminAuthError("");
+
+  try {
+    const { error } = await supabase.auth.resetPasswordForEmail(email, {
+      redirectTo: `${window.location.origin}/admin`,
+    });
+
+    if (error) {
+      setAdminAuthError(error.message);
+      return;
+    }
+
+    alert(
+      "If an account exists for this email, a password reset link has been sent."
+    );
+  } catch (error: any) {
+    setAdminAuthError(
+      error?.message || "Unable to request a password reset."
+    );
+  } finally {
+    setAdminAuthLoading(false);
+  }
+};
+
+const handleAdminPasswordUpdate = async () => {
+  if (adminNewPassword.length < 8) {
+    setAdminAuthError("Your new password must contain at least 8 characters.");
+    return;
+  }
+
+  if (adminNewPassword !== adminConfirmPassword) {
+    setAdminAuthError("The passwords do not match.");
+    return;
+  }
+
+  setAdminAuthLoading(true);
+  setAdminAuthError("");
+
+  try {
+    const { error } = await supabase.auth.updateUser({
+      password: adminNewPassword,
+    });
+
+    if (error) {
+      setAdminAuthError(error.message);
+      return;
+    }
+
+    alert("Your password has been updated successfully. Please sign in again.");
+
+    await supabase.auth.signOut();
+
+    setAdminSession(null);
+    setAdminPassword("");
+    setAdminNewPassword("");
+    setAdminConfirmPassword("");
+    setIsAdminPasswordRecovery(false);
+  } catch (error: any) {
+    setAdminAuthError(
+      error?.message || "Unable to update your password."
+    );
+  } finally {
+    setAdminAuthLoading(false);
+  }
+};
+
   useEffect(() => {
   if (!selected?.id || !pin) {
     setChatMessages([]);
@@ -1675,10 +1826,146 @@ const handleSendChatMessage = async () => {
 
   useEffect(() => { if (selected && pin) adminApi.getSuggestedAgents(selected.id, pin).then((r)=>setAgents(r.agents || [])).catch(()=>setAgents([])); }, [selected, pin]);
   const assign = async (agentId: string) => { if (!selected) return; await adminApi.assignOrder(selected.id, agentId, Number(payment), pin); await load(); };
-  if (!pin) return <div className="grid min-h-screen place-items-center bg-primary p-5"><form onSubmit={login} className="w-full max-w-sm rounded-[30px] bg-white p-8 text-center"><div className="mx-auto grid h-14 w-14 place-items-center rounded-2xl bg-secondary text-accent"><ShieldCheck /></div><h1 className="mt-6 font-display text-3xl text-primary">Operations access</h1><p className="mt-2 text-sm text-muted-foreground">Enter your admin PIN to continue.</p><input required type="password" inputMode="numeric" value={input} onChange={(e)=>setInput(e.target.value)} className={`${fieldStyle} text-center text-xl tracking-[.4em]`} placeholder="••••" /><button className="mt-4 w-full rounded-2xl bg-primary py-3.5 font-bold text-white">Enter workspace</button><Link to="/" className="mt-5 block text-xs text-muted-foreground">Return to KALA</Link></form></div>;
+
+  if (isAdminPasswordRecovery) {
+  return (
+    <div className="grid min-h-screen place-items-center bg-primary p-5">
+      <form
+        onSubmit={(e) => {
+          e.preventDefault();
+          handleAdminPasswordUpdate();
+        }}
+        className="w-full max-w-sm rounded-[30px] bg-white p-8 text-center"
+      >
+        <div className="mx-auto grid h-14 w-14 place-items-center rounded-2xl bg-secondary text-accent">
+          <ShieldCheck />
+        </div>
+
+        <h1 className="mt-6 font-display text-3xl text-primary">
+          Reset password
+        </h1>
+
+        <p className="mt-2 text-sm text-muted-foreground">
+          Create a new password for your KALA administrator account.
+        </p>
+
+        <input
+          type="password"
+          value={adminNewPassword}
+          onChange={(e) => setAdminNewPassword(e.target.value)}
+          placeholder="New password"
+          autoComplete="new-password"
+          className="mt-5 w-full rounded-xl border border-border bg-background px-4 py-3 outline-none focus:ring-2 focus:ring-[#C9960A]"
+        />
+
+        <input
+          type="password"
+          value={adminConfirmPassword}
+          onChange={(e) => setAdminConfirmPassword(e.target.value)}
+          placeholder="Confirm new password"
+          autoComplete="new-password"
+          className="mt-3 w-full rounded-xl border border-border bg-background px-4 py-3 outline-none focus:ring-2 focus:ring-[#C9960A]"
+        />
+
+        {adminAuthError && (
+          <p className="mt-3 text-sm text-red-500">
+            {adminAuthError}
+          </p>
+        )}
+
+        <button
+          type="submit"
+          disabled={adminAuthLoading}
+          className="mt-4 w-full rounded-2xl bg-primary py-3.5 font-bold text-white disabled:opacity-50"
+        >
+          {adminAuthLoading ? "Updating password..." : "Update password"}
+        </button>
+
+        <Link
+          to="/"
+          className="mt-5 block text-xs text-muted-foreground"
+        >
+          Return to KALA
+        </Link>
+      </form>
+    </div>
+  );
+}
+
+
+  // if (!pin) 
+  if (!adminSession)
+  
+    return <div className="grid min-h-screen place-items-center bg-primary p-5"><form onSubmit={login} className="w-full max-w-sm rounded-[30px] bg-white p-8 text-center"><div className="mx-auto grid h-14 w-14 place-items-center rounded-2xl bg-secondary text-accent"><ShieldCheck /></div><h1 className="mt-6 font-display text-3xl text-primary">Operations access</h1><p className="mt-2 text-sm text-muted-foreground">Enter your admin PIN to continue.</p><input
+  type="email"
+  value={adminEmail}
+  onChange={(e) => setAdminEmail(e.target.value)}
+  placeholder="Email address"
+  autoComplete="email"
+  className="w-full rounded-xl border border-border bg-background px-4 py-3 outline-none focus:ring-2 focus:ring-[#C9960A]"
+/>
+
+<input
+  type="password"
+  value={adminPassword}
+  onChange={(e) => setAdminPassword(e.target.value)}
+  placeholder="Password"
+  autoComplete="current-password"
+  className="mt-3 w-full rounded-xl border border-border bg-background px-4 py-3 outline-none focus:ring-2 focus:ring-[#C9960A]"
+/>
+{adminAuthError && (
+  <p className="mt-3 text-sm text-red-500">
+    {adminAuthError}
+  </p>
+)}
+<button
+  type="submit"
+  className="mt-4 w-full rounded-2xl bg-primary py-3.5 font-bold text-white"
+  disabled={adminAuthLoading}
+>
+  {adminAuthLoading ? "Signing in..." : "Sign in"}
+</button>
+<button
+  type="button"
+  onClick={handleAdminForgotPassword}
+  disabled={adminAuthLoading}
+  className="mt-4 text-sm font-semibold text-[#C9960A] hover:underline disabled:opacity-50"
+>
+  Forgot password?
+</button>
+<Link to="/" className="mt-5 block text-xs text-muted-foreground">Return to KALA</Link></form></div>;
   const filtered = orders.filter((o) => tab === "PENDING" ? ["PENDING","REVIEWING"].includes(o.status) : tab === "ATTENDED" ? ["COMPLETED","CONFIRMED","CANCELLED"].includes(o.status) : !["COMPLETED","CONFIRMED","CANCELLED"].includes(o.status));
   return <div className="min-h-screen bg-[#eef0f4]">
-    <header className="flex h-16 items-center justify-between bg-primary px-5 text-white"><Logo /><div className="flex items-center gap-3 text-sm"><span className="hidden text-white/50 sm:inline">Super Admin</span><span className="grid h-9 w-9 place-items-center rounded-full bg-accent font-bold text-primary">SA</span></div></header>
+    <header className="flex h-16 items-center justify-between bg-primary px-5 text-white">
+  <Logo />
+
+  <div className="flex items-center gap-3 text-sm">
+    <span className="hidden text-white/50 sm:inline">Super Admin</span>
+
+    <span className="grid h-9 w-9 place-items-center rounded-full bg-accent font-bold text-primary">
+      SA
+    </span>
+
+    <button
+      type="button"
+      onClick={async () => {
+        const { error } = await supabase.auth.signOut();
+
+        if (error) {
+          alert("Unable to log out: " + error.message);
+          return;
+        }
+
+        setAdminSession(null);
+        setAdminPassword("");
+        setAdminAuthError("");
+      }}
+      className="rounded-full border border-white/20 px-4 py-2 font-semibold text-white transition hover:bg-white/10"
+    >
+      Logout
+    </button>
+  </div>
+</header>
     <div className="grid min-h-[calc(100vh-64px)] lg:grid-cols-[360px_1fr]">
       <aside className="hidden border-r border-border bg-white lg:flex lg:flex-col">
         <div className="border-b border-border p-5"><div className="flex items-center justify-between"><b>Operations chat</b><span className="rounded-full bg-green-100 px-2 py-1 text-[10px] font-bold text-green-700">LIVE</span></div><div className="relative mt-4"><Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" /><input className="w-full rounded-xl bg-secondary/60 py-2.5 pl-9 pr-3 text-sm" placeholder="Search conversations" /></div></div>
