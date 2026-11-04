@@ -1,5 +1,6 @@
 import { FormEvent, useEffect, useMemo, useState } from "react";
 import { supabase } from "../utils/supabase/client";
+import KalaLogo from "@/imports/kala-logo.png";
 import {
   ArrowRight, BadgeCheck, CalendarDays, Check, CheckCircle2, ChevronDown,
   ChevronRight, CircleDollarSign, Clock3, FileText, Headphones, Home,
@@ -28,17 +29,35 @@ const iconMap: Record<string, typeof Package> = {
   tour: BriefcaseBusiness, home: Home, truck: Truck, basket: ShoppingBasket, store: Store, sparkles: Sparkles,
 };
 
+function KalaLogoMark({ size = 40 }: { size?: number }) {
+  return (
+    <img
+      src={KalaLogo}
+      alt="Kala Logo"
+      width={size}
+      height={size}
+      style={{
+        width: size,
+        height: size,
+        objectFit: "contain",
+        display: "block",
+      }}
+    />
+  );
+}
+
+
 function Logo({ light = true }: { light?: boolean }) {
   return (
     <div className="flex items-center gap-2.5">
-      <div className="relative grid h-9 w-9 place-items-center rounded-full border border-accent/50">
-        <span className="font-display text-xl font-bold italic text-accent">K</span>
-        <span className="absolute -right-1 top-1 h-2 w-2 rounded-full bg-accent" />
-      </div>
-      <div className="leading-none">
+        <Link to="/" className="flex items-center gap-3">
+              <KalaLogoMark size={48} />
+              <div className="leading-none">
         <div className={`font-display text-xl font-bold tracking-[0.16em] ${light ? "text-white" : "text-primary"}`}>KALA</div>
-        <div className={`mt-1 text-[8px] font-bold tracking-[0.24em] ${light ? "text-white/45" : "text-primary/45"}`}>CONCIERGE</div>
+        <div className={`mt-1 text-[10px] font-bold tracking-[0.24em] ${light ? "text-white/45" : "text-primary/45"}`}>LOGISTICS</div>
       </div>
+        </Link>
+      
     </div>
   );
 }
