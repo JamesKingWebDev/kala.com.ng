@@ -117,7 +117,7 @@ function ServicePicker({ compact = false }: { compact?: boolean }) {
   const book = () => navigate(`/book${selected ? `?service=${selected.id}` : ""}`);
   return (
     <div className={`relative ${compact ? "" : "mx-auto max-w-5xl"}`}>
-      <div className="rounded-[28px] border border-primary/10 bg-white p-3 shadow-[0_24px_80px_rgba(13,27,62,0.13)] sm:flex sm:items-center">
+      {/* <div className="rounded-[28px] border border-primary/10 bg-white p-3 shadow-[0_24px_80px_rgba(13,27,62,0.13)] sm:flex sm:items-center">
         <button onClick={() => setOpen(!open)} className="flex min-h-16 flex-1 items-center gap-4 rounded-2xl px-4 text-left hover:bg-secondary/50">
           <span className="grid h-11 w-11 shrink-0 place-items-center rounded-full bg-secondary text-accent"><Search className="h-5 w-5" /></span>
           <span className="min-w-0">
@@ -129,7 +129,7 @@ function ServicePicker({ compact = false }: { compact?: boolean }) {
         <button onClick={book} className="mt-2 flex min-h-14 w-full items-center justify-center gap-2 rounded-2xl bg-primary px-7 font-bold text-white transition hover:bg-[#162b5d] sm:mt-0 sm:w-auto">
           Book Service <ArrowRight className="h-4 w-4" />
         </button>
-      </div>
+      </div> */}
       {open && (
         <div className="absolute left-0 right-0 top-[calc(100%+12px)] z-40 grid gap-2 rounded-[28px] border border-primary/10 bg-white p-3 shadow-2xl sm:grid-cols-2 lg:grid-cols-3">
           {services.map((service) => (
@@ -285,8 +285,11 @@ function HomePage() {
               <p className="text-sm font-bold text-white">
                 One request. One team.
               </p>
-              <p className="mt-1 text-xs text-white/45">
+              <p className="mt-1 text-xs text-white/85">
                 Managed from booking to completion.
+              </p>
+              <p className="mt-1 text-xs text-white/45">
+                We've done <b>500+</b> work in Aba, Lagos.
               </p>
             </div>
           </div>
@@ -322,9 +325,9 @@ function HomePage() {
                 </p>
 
                 <h2 className="mt-4 font-display text-4xl font-semibold leading-tight text-primary sm:text-5xl">
-                  One trusted place for
+                  One trusted place for &nbsp;
                   <br className="hidden sm:block" />
-                  the things that need doing.
+                   the things that need doing.
                 </h2>
               </div>
 
@@ -534,6 +537,18 @@ function HomePage() {
   </div>
 </section>
 
+ <section className="bg-white px-5 py-24 lg:px-8">
+          <div className="mx-auto max-w-[1040px]">
+            <SectionTitle center eyebrow="Client notes" title="Relief, delivered." />
+            <div className="mt-12 grid gap-5 md:grid-cols-2">
+              {[
+                ["KALA handled my market run while I was at work. I approved everything in chat and the updates were excellent.", "Adaeze O.", "Lekki"],
+                ["It feels less like calling a random rider and more like having a capable operations team on your side.", "Ogbonna A.", "Aba"],
+              ].map(([quote, name, place]) => <blockquote key={name} className="rounded-[28px] border border-border bg-background p-8"><div className="flex gap-1 text-accent">{[1,2,3,4,5].map((n)=><Star key={n} className="h-4 w-4 fill-current" />)}</div><p className="mt-6 font-display text-xl leading-8 text-primary">“{quote}”</p><footer className="mt-7 text-sm"><b>{name}</b><span className="ml-2 text-muted-foreground">· {place}</span></footer></blockquote>)}
+            </div>
+          </div>
+        </section>
+
         <section className="bg-[#F7F4EC] px-5 py-28 lg:px-8">
   <div className="mx-auto max-w-[1280px]">
 
@@ -621,12 +636,11 @@ function HomePage() {
           </p>
 
           <h2 className="mt-4 font-display text-3xl font-semibold sm:text-4xl">
-            Want to earn by helping people?
+            Earn money running errans.
           </h2>
 
           <p className="mt-4 max-w-xl text-sm leading-7 text-white/55">
-            Join the KALA professional network, receive service requests
-            matched to your capabilities and earn from completed orders.
+            Join  KALA, get jobs near you, and get paid.
           </p>
         </div>
 
@@ -644,107 +658,14 @@ function HomePage() {
   </div>
 </section>
 
-        <section className="bg-white px-5 py-28 lg:px-8">
-  <div className="mx-auto max-w-[1280px]">
 
-    <div className="grid items-center gap-14 lg:grid-cols-[0.75fr_1.25fr]">
 
-      {/* Intro */}
-      <div className="max-w-md">
-        <p className="text-[10px] font-bold uppercase tracking-[0.28em] text-accent">
-          Why clients choose KALA
-        </p>
-
-        <h2 className="mt-4 font-display text-4xl font-semibold leading-tight text-primary sm:text-5xl">
-          Relief,
-          <br />
-          delivered.
-        </h2>
-
-        <p className="mt-6 text-sm leading-7 text-muted-foreground">
-          You don't need another number to call or another person to
-          coordinate. KALA gives you one place to request a service,
-          communicate, follow progress and get the job completed.
-        </p>
-
-        <button
-          onClick={() => navigate("/book")}
-          className="group mt-8 inline-flex items-center gap-2 rounded-full bg-primary px-6 py-3.5 text-sm font-bold text-white transition hover:-translate-y-0.5 hover:bg-[#162b5d]"
-        >
-          Book a Service
-          <ArrowRight className="h-4 w-4 transition group-hover:translate-x-1" />
-        </button>
-      </div>
-
-      {/* Benefits */}
-      <div className="grid gap-4 sm:grid-cols-2">
-
-        {[
-          {
-            icon: Clock3,
-            title: "Less coordination",
-            body: "Tell KALA what you need once. Our operations team handles the coordination.",
-          },
-          {
-            icon: MessageCircle,
-            title: "Clear communication",
-            body: "Keep instructions, updates, approvals and conversations connected to your order.",
-          },
-          {
-            icon: MapPin,
-            title: "Know what's happening",
-            body: "Follow your request from booking through assignment, execution and completion.",
-          },
-          {
-            icon: ShieldCheck,
-            title: "A team you can rely on",
-            body: "KALA oversees the service while the assigned professional handles the work.",
-          },
-          {
-            icon: FileText,
-            title: "Everything stays connected",
-            body: "Your order details, instructions and service history stay together in one place.",
-          },
-          {
-            icon: CheckCircle2,
-            title: "Completion matters",
-            body: "We don't stop at assignment. KALA follows the request through to the outcome.",
-          },
-        ].map((item) => {
-          const Icon = item.icon;
-
-          return (
-            <div
-              key={item.title}
-              className="group rounded-[26px] border border-primary/8 bg-[#F7F4EC] p-7 transition duration-300 hover:-translate-y-1 hover:bg-white hover:shadow-[0_20px_50px_rgba(13,27,62,0.08)]"
-            >
-              <div className="grid h-11 w-11 place-items-center rounded-2xl bg-white text-accent shadow-sm transition duration-300 group-hover:bg-primary">
-                <Icon className="h-5 w-5 transition group-hover:text-accent" />
-              </div>
-
-              <h3 className="mt-6 font-display text-xl font-semibold text-primary">
-                {item.title}
-              </h3>
-
-              <p className="mt-2 text-sm leading-6 text-muted-foreground">
-                {item.body}
-              </p>
-            </div>
-          );
-        })}
-
-      </div>
-    </div>
-
-  </div>
-</section>
-
-        <section className="bg-[#F7F4EC] px-5 py-28 lg:px-8">
-  <div className="mx-auto grid max-w-[1280px] gap-14 lg:grid-cols-[0.8fr_1.2fr] lg:gap-20">
+        <section className="bg-[#F7F4EC] px-5 pb-28 lg:px-8">
+  <div className="mx-auto grid max-w-[1280px] gap-14  lg:gap-20">
 
     {/* FAQ intro */}
-    <div className="max-w-md">
-      <p className="text-[10px] font-bold uppercase tracking-[0.28em] text-accent">
+    {/* <div className="max-w-md"> */}
+      {/* <p className="text-[10px] font-bold uppercase tracking-[0.28em] text-accent">
         Questions, answered
       </p>
 
@@ -765,8 +686,8 @@ function HomePage() {
       >
         Start a Booking
         <ArrowRight className="h-4 w-4 transition group-hover:translate-x-1" />
-      </button>
-    </div>
+      </button> */}
+    {/* </div> */}
 
     {/* Questions */}
     <div className="space-y-3">
@@ -843,20 +764,13 @@ function Footer() {
 
       {/* Brand */}
       <div className="max-w-sm">
-        <Link to="/" className="inline-flex items-center gap-3">
-          <div className="grid h-10 w-10 place-items-center rounded-full border border-accent/50 text-accent">
-            <span className="font-display text-lg italic">K</span>
-          </div>
-
-          <div>
-            <div className="font-display text-xl font-semibold tracking-wide">
-              KALA
-            </div>
-
-            <div className="text-[8px] font-bold uppercase tracking-[0.3em] text-white/40">
-              Concierge
-            </div>
-          </div>
+        
+        <Link to="/" className="flex items-center gap-3">
+              <KalaLogoMark size={48} />
+              <div className="leading-none">
+        <div className={`font-display text-xl font-bold tracking-[0.16em] text-white"}`}>KALA</div>
+        <div className={`mt-1 text-[10px] font-bold tracking-[0.24em] text-white/45"}`}>LOGISTICS</div>
+      </div>
         </Link>
 
         <p className="mt-6 max-w-xs text-sm leading-6 text-white/45">
@@ -987,7 +901,7 @@ function Footer() {
             href="https://github.com/jameskingwebdev"
             className="transition hover:text-white text-[9px] font-bold uppercase tracking-[0.25em] text-accent"
           >
-            James King
+            Kala Development Team
           </a>
       </span>
 
