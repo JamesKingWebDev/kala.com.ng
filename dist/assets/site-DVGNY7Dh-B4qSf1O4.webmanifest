@@ -1,0 +1,10 @@
+{
+  "name": "Kala Logistics",
+  "short_name": "Kala",
+  "description": "The Web Applicaton for Kala.com.ng",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#000000",
+  "icons": []
+}

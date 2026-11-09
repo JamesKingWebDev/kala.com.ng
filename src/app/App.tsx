@@ -66,8 +66,7 @@ function Navbar() {
   const [open, setOpen] = useState(false);
   return (
     <header className="sticky top-0 z-50 border-b border-white/10 bg-primary/95 text-white backdrop-blur-xl">
-      <div className="mx-auto flex h-[72px] max-w-[1380px] items-center justify-between px-5 lg:px-8">
-        <Link to="/" className="shrink-0"><Logo /></Link>
+      <div className="mx-auto flex h-[72px] max-w-[1380px] items-center justify-between px-5 lg:px-8"><Logo />
         <nav className="hidden items-center gap-7 text-sm text-white/70 md:flex">
           <Link to="/services" className="transition hover:text-white">Services</Link>
           <Link to="/track" className="transition hover:text-white">Track order</Link>
@@ -157,6 +156,7 @@ function SectionTitle({ eyebrow, title, body, center = false }: { eyebrow: strin
 function HomePage() {
   const services = useServices();
   const { navigate } = useNav();
+  const ADMIN_WHATSAPP = '+2347065764557';
   return (
     <div className="bg-background">
       <Navbar />
@@ -537,7 +537,7 @@ function HomePage() {
   </div>
 </section>
 
- <section className="bg-white px-5 py-24 lg:px-8">
+ {/* <section className="bg-white px-5 py-24 lg:px-8">
           <div className="mx-auto max-w-[1040px]">
             <SectionTitle center eyebrow="Client notes" title="Relief, delivered." />
             <div className="mt-12 grid gap-5 md:grid-cols-2">
@@ -547,13 +547,13 @@ function HomePage() {
               ].map(([quote, name, place]) => <blockquote key={name} className="rounded-[28px] border border-border bg-background p-8"><div className="flex gap-1 text-accent">{[1,2,3,4,5].map((n)=><Star key={n} className="h-4 w-4 fill-current" />)}</div><p className="mt-6 font-display text-xl leading-8 text-primary">“{quote}”</p><footer className="mt-7 text-sm"><b>{name}</b><span className="ml-2 text-muted-foreground">· {place}</span></footer></blockquote>)}
             </div>
           </div>
-        </section>
+        </section> */}
 
-        <section className="bg-[#F7F4EC] px-5 py-28 lg:px-8">
+        <section className="bg-[#F7F4EC] px-5 py-28 lg:px-8 mb-0">
   <div className="mx-auto max-w-[1280px]">
 
     {/* Heading */}
-    <div className="mx-auto max-w-2xl text-center">
+    <div className="mx-auto max-w-2xl text-center mb-0">
       <p className="text-[10px] font-bold uppercase tracking-[0.28em] text-accent">
         The KALA standard
       </p>
@@ -624,43 +624,55 @@ function HomePage() {
     </div>
 
     {/* Agent CTA */}
-    <div className="relative mt-16 overflow-hidden rounded-[32px] bg-primary px-7 py-10 text-white sm:px-10 sm:py-12">
-      <div className="absolute -right-20 -top-24 h-64 w-64 rounded-full border border-accent/10" />
-      <div className="absolute -bottom-32 right-24 h-64 w-64 rounded-full bg-accent/5 blur-3xl" />
+    
+<div className="relative mt-16 overflow-hidden rounded-[32px] border border-[#8b2635]/40 bg-gradient-to-br from-[#5c1022] via-[#75172d] to-[#390b1a] px-7 py-10 text-white shadow-[0_20px_60px_rgba(92,16,34,0.30)] sm:px-10 sm:py-12">
 
-      <div className="relative flex flex-col gap-8 lg:flex-row lg:items-center lg:justify-between">
+  {/* Decorative background elements */}
+  <div className="absolute -right-20 -top-24 h-72 w-72 rounded-full border border-[#e8b94f]/20" />
 
-        <div className="max-w-2xl">
-          <p className="text-[10px] font-bold uppercase tracking-[0.25em] text-accent">
-            Become a KALA agent
-          </p>
+  <div className="absolute -right-10 -top-14 h-52 w-52 rounded-full border border-white/5" />
 
-          <h2 className="mt-4 font-display text-3xl font-semibold sm:text-4xl">
-            Earn money running errans.
-          </h2>
+  <div className="absolute -bottom-32 right-24 h-72 w-72 rounded-full bg-[#e8b94f]/10 blur-3xl" />
 
-          <p className="mt-4 max-w-xl text-sm leading-7 text-white/55">
-            Join  KALA, get jobs near you, and get paid.
-          </p>
-        </div>
+  <div className="absolute -bottom-20 -left-20 h-64 w-64 rounded-full bg-[#a52a43]/30 blur-3xl" />
 
-        <Link
-          to="/become-an-agent"
-          className="group inline-flex w-fit shrink-0 items-center gap-2 rounded-full bg-accent px-7 py-4 text-sm font-bold text-primary transition hover:-translate-y-0.5 hover:bg-[#e1b43a]"
-        >
-          Become a KALA Agent
-          <ArrowRight className="h-4 w-4 transition group-hover:translate-x-1" />
-        </Link>
+  {/* Content */}
+  <div className="relative flex flex-col gap-8 lg:flex-row lg:items-center lg:justify-between">
 
-      </div>
+    <div className="max-w-2xl">
+
+      <p className="text-[10px] font-bold uppercase tracking-[0.3em] text-[#f2c75c]">
+        Become a KALA agent
+      </p>
+
+      <h2 className="mt-4 font-display text-3xl font-semibold leading-tight text-white sm:text-4xl">
+        Earn money running errands.
+      </h2>
+
+      <p className="mt-4 max-w-xl text-sm leading-7 text-white/75">
+        Join KALA, get jobs near you, and get paid. Turn your time into income while helping people get things done.
+      </p>
+
     </div>
+
+    <Link
+      to="/become-an-agent"
+      className="group inline-flex w-fit shrink-0 items-center gap-3 rounded-full bg-gradient-to-r from-[#f5cf69] to-[#dfaa35] px-7 py-4 text-sm font-bold text-[#390b1a] shadow-lg shadow-black/20 transition duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-black/30"
+    >
+      Become a KALA Agent
+      <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
+    </Link>
+
+  </div>
+</div>
+
 
   </div>
 </section>
 
 
 
-        <section className="bg-[#F7F4EC] px-5 pb-28 lg:px-8">
+        <section className="bg-[#F7F4EC] mt-0 px-5 pb-28 lg:px-8">
   <div className="mx-auto grid max-w-[1280px] gap-14  lg:gap-20">
 
     {/* FAQ intro */}
@@ -750,172 +762,214 @@ function HomePage() {
 </section>
       </main>
       <Footer />
+            {/* ─────────────────────────────────────────────
+    FLOATING COMPLAINT BUTTON
+───────────────────────────────────────────── */}
+<a
+  href={`https://wa.me/${ADMIN_WHATSAPP}?text=${encodeURIComponent(
+    'Hello KALA Logistics, I need your help.'
+  )}`}
+  target="_blank"
+  rel="noopener noreferrer"
+  className="
+    fixed
+    bottom-5
+    right-5
+    z-[70]
+    flex
+    items-center
+    gap-2
+    bg-red-600
+    hover:bg-red-700
+    text-white
+    px-4
+    py-3
+    rounded-full
+    shadow-xl
+    hover:shadow-2xl
+    transition-all
+    duration-200
+    hover:-translate-y-1
+    active:scale-95
+    font-bold
+    text-sm
+  "
+  aria-label="Make a complaint"
+>
+  <MessageCircle className="w-5 h-5" />
+
+  <span className="hidden sm:inline">
+    How may we be of service to you
+
+  </span>
+</a>
     </div>
   );
 }
+
 
 function Footer() {
   return (
-    <footer className="bg-[#071126] px-5 py-16 text-white lg:px-8">
-  <div className="mx-auto max-w-[1280px]">
+    <footer className="bg-[#071126] px-5 py-16 text-center text-white lg:px-8 lg:text-left">
+      <div className="mx-auto max-w-[1280px]">
 
-    {/* Main footer */}
-    <div className="grid gap-12 md:grid-cols-[1.4fr_.7fr_.7fr_.8fr]">
+        {/* Main footer */}
+        <div className="grid gap-12 md:grid-cols-[1.4fr_.7fr_.7fr_.8fr]">
 
-      {/* Brand */}
-      <div className="max-w-sm">
-        
-        <Link to="/" className="flex items-center gap-3">
+          {/* Brand */}
+          <div className="mx-auto max-w-sm lg:mx-0">
+            <Link
+              to="/"
+              className="flex items-center justify-center gap-3 lg:justify-start"
+            >
               <KalaLogoMark size={48} />
-              <div className="leading-none">
-        <div className={`font-display text-xl font-bold tracking-[0.16em] text-white"}`}>KALA</div>
-        <div className={`mt-1 text-[10px] font-bold tracking-[0.24em] text-white/45"}`}>LOGISTICS</div>
-      </div>
-        </Link>
+              <div className="leading-none text-left">
+                <div className="font-display text-xl font-bold tracking-[0.16em] text-white">
+                  KALA
+                </div>
+                <div className="mt-1 text-[10px] font-bold tracking-[0.24em] text-white/45">
+                  LOGISTICS
+                </div>
+              </div>
+            </Link>
 
-        <p className="mt-6 max-w-xs text-sm leading-6 text-white/45">
-          Reliable service coordination for busy people across Nigeria.
-          Tell us what needs doing. We'll coordinate the rest.
-        </p>
+            <p className="mx-auto mt-6 max-w-xs text-sm leading-6 text-white/45 lg:mx-0">
+              Reliable service coordination for busy people across Nigeria.
+              Tell us what needs doing. We'll coordinate the rest.
+            </p>
 
-        <button
-          onClick={() => navigate("/book")}
-          className="group mt-7 inline-flex items-center gap-2 rounded-full bg-accent px-5 py-3 text-xs font-bold text-primary transition hover:-translate-y-0.5 hover:bg-[#e1b43a]"
-        >
-          Book a Service
-          <ArrowRight className="h-3.5 w-3.5 transition group-hover:translate-x-1" />
-        </button>
-      </div>
+            <button
+              onClick={() => navigate("/book")}
+              className="group mx-auto mt-7 inline-flex items-center justify-center gap-2 rounded-full bg-accent px-5 py-3 text-xs font-bold text-primary transition hover:-translate-y-0.5 hover:bg-[#e1b43a] lg:mx-0"
+            >
+              Book a Service
+              <ArrowRight className="h-3.5 w-3.5 transition group-hover:translate-x-1" />
+            </button>
+          </div>
 
-      {/* Navigate */}
-      <div>
-        <p className="text-[9px] font-bold uppercase tracking-[0.25em] text-accent">
-          Navigate
-        </p>
+          {/* Navigate */}
+          <div>
+            <p className="text-[9px] font-bold uppercase tracking-[0.25em] text-accent">
+              Navigate
+            </p>
 
-        <div className="mt-5 space-y-3 text-sm text-white/55">
-          <Link
-            to="/services"
-            className="block transition hover:text-white"
-          >
-            Services
-          </Link>
+            <div className="mt-5 space-y-3 text-sm text-white/55">
+              <Link to="/services" className="block transition hover:text-white">
+                Services
+              </Link>
 
-          <Link
-            to="/book"
-            className="block transition hover:text-white"
-          >
-            Book a service
-          </Link>
+              <Link to="/book" className="block transition hover:text-white">
+                Book a service
+              </Link>
 
-          <Link
-            to="/track"
-            className="block transition hover:text-white"
-          >
-            Track an order
-          </Link>
+              <Link to="/track" className="block transition hover:text-white">
+                Track an order
+              </Link>
 
-          <Link
-            to="/become-an-agent"
-            className="block transition hover:text-white"
-          >
-            Become an agent
-          </Link>
+              <Link to="/become-an-agent" className="block transition hover:text-white">
+                Become an agent
+              </Link>
+            </div>
+          </div>
+
+          {/* Services */}
+          <div>
+            <p className="text-[9px] font-bold uppercase tracking-[0.25em] text-accent">
+              Services
+            </p>
+
+            <div className="mt-5 flex flex-col items-center gap-3 text-sm text-white/55 lg:items-start">
+              <button
+                onClick={() => navigate("/book?service=tour-guide")}
+                className="transition hover:text-white"
+              >
+                Tour Guide
+              </button>
+
+              <button
+                onClick={() => navigate("/book?service=house-cleaning")}
+                className="transition hover:text-white"
+              >
+                House Cleaning
+              </button>
+
+              <button
+                onClick={() => navigate("/book?service=pick-up-delivery")}
+                className="transition hover:text-white"
+              >
+                Pick Up & Delivery
+              </button>
+
+              <button
+                onClick={() => navigate("/book?service=grocery-shopping")}
+                className="transition hover:text-white"
+              >
+                Grocery Shopping
+              </button>
+            </div>
+          </div>
+
+          {/* Support */}
+          <div>
+            <p className="text-[9px] font-bold uppercase tracking-[0.25em] text-accent">
+              Support
+            </p>
+
+            <div className="mt-5 flex flex-col items-center gap-4 text-sm text-white/55 lg:items-start">
+              <a
+                href="tel:+2347065764557"
+                className="transition hover:text-white"
+              >
+                Call KALA
+              </a>
+
+              <a
+                href="mailto:support@kala.com.ng"
+                className="transition hover:text-white"
+              >
+                support@kala.com.ng
+              </a>
+
+              <Link
+                to="/track"
+                className="flex items-center justify-center gap-2 transition hover:text-white lg:justify-start"
+              >
+                <MapPin className="h-4 w-4 shrink-0 text-accent" />
+                Track your order
+              </Link>
+            </div>
+          </div>
+
         </div>
-      </div>
 
-      {/* Services */}
-      <div>
-        <p className="text-[9px] font-bold uppercase tracking-[0.25em] text-accent">
-          Services
-        </p>
+        {/* Bottom bar */}
+        <div className="mt-14 flex flex-col items-center gap-5 border-t border-white/10 pt-6 text-center text-[10px] text-white/30 sm:flex-row sm:justify-between lg:text-left">
 
-        <div className="mt-5 space-y-3 text-sm text-white/55">
-  <button
-    onClick={() => navigate("/book?service=tour-guide")}
-    className="block text-left transition hover:text-white"
-  >
-    Tour Guide
-  </button>
+          <span className="leading-6">
+            © 2026 KALA. Built with ❤️ by {" "}
+            <a
+              href="https://github.com/jameskingwebdev"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="font-bold uppercase tracking-[0.15em] text-accent transition hover:text-white"
+            >
+              Kala Development Team
+            </a>
+          </span>
 
-  <button
-    onClick={() => navigate("/book?service=house-cleaning")}
-    className="block text-left transition hover:text-white"
-  >
-    House Cleaning
-  </button>
+          <div className="flex flex-wrap items-center justify-center gap-x-5 gap-y-2">
+            <span>Service coordination</span>
+            <span>Client support</span>
+            <span>Professional network</span>
+          </div>
 
-  <button
-    onClick={() => navigate("/book?service=pick-up-delivery")}
-    className="block text-left transition hover:text-white"
-  >
-    Pick Up & Delivery
-  </button>
-
-  <button
-    onClick={() => navigate("/book?service=grocery-shopping")}
-    className="block text-left transition hover:text-white"
-  >
-    Grocery Shopping
-  </button>
-</div>
-      </div>
-
-      {/* Support */}
-      <div>
-        <p className="text-[9px] font-bold uppercase tracking-[0.25em] text-accent">
-          Support
-        </p>
-
-        <div className="mt-5 space-y-4 text-sm text-white/55">
-          <a
-            href="tel:+2340000000000"
-            className="block transition hover:text-white"
-          >
-            Call KALA
-          </a>
-
-          <a
-            href="mailto:support@kala.com.ng"
-            className="block transition hover:text-white"
-          >
-            support@kala.com.ng
-          </a>
-
-          <Link
-            to="/track"
-            className="flex items-center gap-2 transition hover:text-white"
-          >
-            <MapPin className="h-4 w-4 text-accent" />
-            Track your order
-          </Link>
         </div>
+
       </div>
-
-    </div>
-
-    {/* Bottom bar */}
-    <div className="mt-14 flex flex-col gap-4 border-t border-white/10 pt-6 text-[10px] text-white/30 sm:flex-row sm:items-center sm:justify-between">
-      <span>
-        © 2026 KALA. Built with ❤️ by <a
-            href="https://github.com/jameskingwebdev"
-            className="transition hover:text-white text-[9px] font-bold uppercase tracking-[0.25em] text-accent"
-          >
-            Kala Development Team
-          </a>
-      </span>
-
-      <div className="flex gap-5">
-        <span>Service coordination</span>
-        <span>Client support</span>
-        <span>Professional network</span>
-      </div>
-    </div>
-
-  </div>
-</footer>
+    </footer>
   );
 }
+
 
 const fieldStyle = "mt-2 w-full rounded-2xl border border-border bg-white px-4 py-3.5 text-sm outline-none transition focus:border-accent focus:ring-4 focus:ring-accent/10";
 
@@ -1099,124 +1153,124 @@ function BookingPage() {
 })}
               <label className="text-sm font-semibold sm:col-span-2">Additional instructions<textarea rows={3} value={form.special_instructions || ""} onChange={(e) => set("special_instructions", e.target.value)} className={fieldStyle} placeholder="Access notes, preferences, or anything else we should know" /></label>
             </div>
-            <div className="my-8 h-px bg-border" />
+            {/* <div className="my-8 h-px bg-border" />
             <h3 className="font-display text-2xl text-primary">
-  Where and when?
-</h3>
+              Where and when?
+            </h3>
 
-<p className="mt-2 max-w-xl text-sm leading-6 text-muted-foreground">
-  Tell us where the service will happen and when you would like it handled.
-  These details help our operations team coordinate the right professional.
-</p>
+            <p className="mt-2 max-w-xl text-sm leading-6 text-muted-foreground">
+              Tell us where the service will happen and when you would like it handled.
+              These details help our operations team coordinate the right professional.
+            </p>
 
-<div className="mt-6 grid gap-5 sm:grid-cols-2">
-  <label className="text-sm font-semibold sm:col-span-2">
-    <span className="mb-2 block text-primary">
-      Service address
-    </span>
+            <div className="mt-6 grid gap-5 sm:grid-cols-2">
+              <label className="text-sm font-semibold sm:col-span-2">
+                <span className="mb-2 block text-primary">
+                  Service address
+                </span>
 
-    <input
-      required
-      value={form.address || ""}
-      onChange={(e) => set("address", e.target.value)}
-      className={fieldStyle}
-      placeholder="Street address, landmark or detailed location"
-    />
+                <input
+                  required
+                  value={form.address || ""}
+                  onChange={(e) => set("address", e.target.value)}
+                  className={fieldStyle}
+                  placeholder="Street address, landmark or detailed location"
+                />
 
-    <span className="mt-2 block text-xs font-normal text-muted-foreground">
-      Provide enough detail for the assigned professional to find the location.
-    </span>
-  </label>
+                <span className="mt-2 block text-xs font-normal text-muted-foreground">
+                  Provide enough detail for the assigned professional to find the location.
+                </span>
+              </label>
 
-  <label className="text-sm font-semibold">
-    <span className="mb-2 block text-primary">
-      LGA / Area
-    </span>
+              <label className="text-sm font-semibold">
+                <span className="mb-2 block text-primary">
+                  LGA / Area
+                </span>
 
-    <input
-      required
-      value={form.lga || ""}
-      onChange={(e) => set("lga", e.target.value)}
-      className={fieldStyle}
-      placeholder="e.g. Aba North"
-    />
-  </label>
+                <input
+                  required
+                  value={form.lga || ""}
+                  onChange={(e) => set("lga", e.target.value)}
+                  className={fieldStyle}
+                  placeholder="e.g. Aba North"
+                />
+              </label>
 
-  <label className="text-sm font-semibold">
-    <span className="mb-2 block text-primary">
-      State
-    </span>
+              <label className="text-sm font-semibold">
+                <span className="mb-2 block text-primary">
+                  State
+                </span>
 
-    <input
-      required
-      value={form.state || ""}
-      onChange={(e) => set("state", e.target.value)}
-      className={fieldStyle}
-      placeholder="e.g. Abia"
-    />
-  </label>
+                <input
+                  required
+                  value={form.state || ""}
+                  onChange={(e) => set("state", e.target.value)}
+                  className={fieldStyle}
+                  placeholder="e.g. Abia"
+                />
+              </label>
 
-  <label className="text-sm font-semibold">
-    <span className="mb-2 block text-primary">
-      Preferred date
-    </span>
+              <label className="text-sm font-semibold">
+                <span className="mb-2 block text-primary">
+                  Preferred date
+                </span>
 
-    <input
-      required={!form.flexible_schedule}
-      type="date"
-      value={form.preferred_date || ""}
-      onChange={(e) => set("preferred_date", e.target.value)}
-      className={fieldStyle}
-    />
-  </label>
+                <input
+                  required={!form.flexible_schedule}
+                  type="date"
+                  value={form.preferred_date || ""}
+                  onChange={(e) => set("preferred_date", e.target.value)}
+                  className={fieldStyle}
+                />
+              </label>
 
-  <label className="text-sm font-semibold">
-    <span className="mb-2 block text-primary">
-      Preferred time
-    </span>
+              <label className="text-sm font-semibold">
+                <span className="mb-2 block text-primary">
+                  Preferred time
+                </span>
 
-    <input
-      required={!form.flexible_schedule}
-      type="time"
-      value={form.preferred_time || ""}
-      onChange={(e) => set("preferred_time", e.target.value)}
-      className={fieldStyle}
-    />
-  </label>
+                <input
+                  required={!form.flexible_schedule}
+                  type="time"
+                  value={form.preferred_time || ""}
+                  onChange={(e) => set("preferred_time", e.target.value)}
+                  className={fieldStyle}
+                />
+              </label>
 
-  <label className="flex cursor-pointer items-start gap-3 rounded-2xl border border-primary/10 bg-[#F7F4EC] p-4 text-sm sm:col-span-2">
-    <input
-      type="checkbox"
-      checked={form.flexible_schedule}
-      onChange={(e) => set("flexible_schedule", e.target.checked)}
-      className="mt-0.5 h-5 w-5 shrink-0 accent-[#C9960A]"
-    />
+              <label className="flex cursor-pointer items-start gap-3 rounded-2xl border border-primary/10 bg-[#F7F4EC] p-4 text-sm sm:col-span-2">
+                <input
+                  type="checkbox"
+                  checked={form.flexible_schedule}
+                  onChange={(e) => set("flexible_schedule", e.target.checked)}
+                  className="mt-0.5 h-5 w-5 shrink-0 accent-[#C9960A]"
+                />
 
-    <span>
-      <span className="block font-bold text-primary">
-        My schedule is flexible
-      </span>
+                <span>
+                  <span className="block font-bold text-primary">
+                    My schedule is flexible
+                  </span>
 
-      <span className="mt-1 block text-xs font-normal leading-5 text-muted-foreground">
-        KALA can coordinate the request around the availability of the
-        appropriate professional.
-      </span>
-    </span>
-  </label>
-</div>
+                  <span className="mt-1 block text-xs font-normal leading-5 text-muted-foreground">
+                    KALA can coordinate the request around the availability of the
+                    appropriate professional.
+                  </span>
+                </span>
+              </label>
+            </div> */}
             <div className="mt-8">
-  <button
-    type="submit"
-    className="group flex w-full items-center justify-center gap-2 rounded-2xl bg-primary py-4 font-bold text-white transition hover:-translate-y-0.5 hover:bg-[#162b5d]"
-  >
-    Review your request
-    <ArrowRight className="h-4 w-4 transition group-hover:translate-x-1" />
-  </button>
+              <button
+                type="submit"
+                className="group flex w-full items-center justify-center gap-2 rounded-2xl bg-primary py-4 font-bold text-white transition hover:-translate-y-0.5 hover:bg-[#162b5d]"
+              >
+                Review your request
+                <ArrowRight className="h-4 w-4 transition group-hover:translate-x-1" />
+              </button>
 
-  <p className="mt-3 text-center text-xs leading-5 text-muted-foreground">
-    You will review all your details before the request is sent to KALA.
-  </p>
-</div>
+              <p className="mt-3 text-center text-xs leading-5 text-muted-foreground">
+                You will review all your details before the request is sent to KALA.
+              </p>
+            </div>
           </form>
           <aside className="h-fit rounded-[30px] bg-primary p-7 text-white lg:sticky lg:top-24">
             <p className="text-xs font-bold uppercase tracking-[.2em] text-accent">Your request</p>
